@@ -1,0 +1,73 @@
+= gitea-ocp
+
+== Requirements
+
+This role is designed to set up Gitea ("Git with a cup of Tea") on an OpenShift cluster. The intended use for this role is in an Operator. The role does not set up Kubernetes controllers (like Deployments or ReplicaSets) but creates the Gitea Pod directly - this is the preferred approach to be used by an Operator.
+
+This role also requires a PostgreSQL Database to be running in the same OpenShift project as the Gitea Server. This database needs to be set up first.
+
+== Role Variables
+
+[cols="2,1,1,4",options="header"]
+|====
+|Variable Name|Default|Required|Description
+|_gitea_namespace|gitea|Yes|Project Name to install Gitea into
+|_gitea_name|gitea|Yes|Name of the Gitea service
+|_gitea_ssl|False|No|Set up HTTPS for the Gitea Route
+|_gitea_postgresql_service_name|postgresql|Yes|Name of the PostgreSQL service to connect (should be listening on port 5432)
+|_gitea_postgresql_database_name|postgresql|Yes|Name of Database connect to
+|_gitea_postgresql_user|postgresql|Yes|Database User Name
+|_gitea_postgresql_password|postgresql|Yes|Database Password
+|_gitea_volume_size|1Gi|No|Size of Persistent Volume to be created
+|_gitea_memory_request|512Mi|No|Minimum Memory Requirement
+|_gitea_memory_limit|512Mi|No|Maximum Memory Requirement
+|_gitea_cpu_request|200m|No|Minimum CPU Requirement
+|_gitea_cpu_limit|500m|No|Maximum CPU Requirement
+|_gitea_wait_for_init|true|No|Wait for the database pod to be running and ready
+|_gitea_image|docker.io/wkulhanek/gitea|Yes|Container image for Gitea
+|_gitea_image_tag|latest|Yes|Tag for Gitea container image
+|_gitea_state|present|No|`present` to install, `absent` to remove
+|====
+
+== Dependencies
+
+* k8s module.
+* Running PostgreSQL database listening on port 5432
+* Working .kube/config configuration.
+* The Project/Namespace must exist
+
+== Example Playbook
+
+[source,yaml]
+----
+- hosts: localhost
+  gather_facts: no
+  tasks:
+  - name: Set up PostgreSQL
+    include_role:
+      name: ./roles/postgresql-ocp
+    vars:
+      _postgresql_namespace: "gitea"
+      _postgresql_name: "postgresql-gitea"
+      _postgresql_database_name: "giteadb"
+      _postgresql_user: "giteauser"
+      _postgresql_password: "giteapassword"
+      _postgresql_volume_size: "4Gi"
+
+  - name: Set up gitea
+    include_role:
+      name: ./roles/gitea-ocp
+    vars:
+      _gitea_namespace: "gitea"
+      _gitea_name: "gitea"
+      _gitea_ssl: "True|
+      _gitea_volume_size: "4Gi"
+      _gitea_postgresql_service_name: "postgresql-gitea"
+      _gitea_postgresql_database_name: giteadb
+      _gitea_postgresql_user: giteauser
+      _gitea_postgresql_password: giteapassword
+----
+
+== License
+
+BSD

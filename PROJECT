@@ -1,0 +1,8 @@
+domain: opentlc.com
+layout: ansible.sdk.operatorframework.io/v1
+projectName: gitea-operator
+resources:
+- group: gpte
+  kind: Gitea
+  version: v1
+version: 3-alpha

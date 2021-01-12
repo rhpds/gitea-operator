@@ -1,0 +1,61 @@
+postgresql-ocp
+==============
+
+Requirements
+------------
+
+This role is designed to set up PostgreSQL on an OpenShift cluster. The intended use for this role is in an Operator. The role does not set up Kubernetes controllers (like Deployments or ReplicaSets) but creates the PostgreSQL Pod directly - this is the preferred approach to be used by an Operator.
+
+Role Variables
+--------------
+
+[cols="2,1,1,4",options="header"]
+|====
+|Variable Name|Default|Required|Description
+|_postgresql_namespace|postgresql|Yes|Project Name to install the database into
+|_postgresql_name|postgresql|No|Name of the database service
+|_postgresql_database_name|postgresql|No|Name of Database to be created
+|_postgresql_user|postgresql|No|Database User Name
+|_postgresql_password|postgresql|No|Database Password
+|_postgresql_volume_size|1Gi|No|Size of Persistent Volume to be created
+|_postgresql_memory_request|512Mi|No|Minimum Memory Requirement
+|_postgresql_memory_limit|512Mi|No|Maximum Memory Requirement
+|_postgresql_cpu_request|200m|No|Minimum CPU Requirement
+|_postgresql_cpu_limit|500m|No|Maximum CPU Requirement
+|_postgresql_wait_for_init|true|No|Wait for the database pod to be running and ready
+|_postgresql_image|registry.redhat.io/rhscl/postgresql-96-rhel7|Yes|The image to use for PostgreSQL
+|_postgresql_image_tag|latest|Yes|The image tag to use for PostgreSQL
+|_postgresql_state|present|No|`present` to install, `absent` to remove
+|====
+
+Dependencies
+------------
+
+* k8s module.
+* Working .kube/config configuration.
+* The Project/Namespace must exist
+
+Example Playbook
+----------------
+
+[source,yaml]
+----
+- hosts: localhost
+  gather_facts: no
+  tasks:
+  - name: Set up PostgreSQL
+    include_role:
+      name: ./roles/postgresql-ocp
+    vars:
+      _postgresql_namespace: "postgresql"
+      _postgresql_name: "postgresql"
+      _postgresql_database_name: "gogsdb"
+      _postgresql_user: "gogsuser"
+      _postgresql_password: "gogspassword"
+      _postgresql_volume_size: "4Gi"
+----
+
+License
+-------
+
+BSD

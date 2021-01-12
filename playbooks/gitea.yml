@@ -1,0 +1,51 @@
+---
+# Persistent Gitea deployment playbook.
+#
+# The Playbook expects the following variables to be set in the CR:
+# (Note that Camel case gets converted by the ansible-operator to Snake case)
+# - PostgresqlVolumeSize
+# - GiteaVolumeSize
+# - GiteaSSL
+# The following variables come from the ansible-operator
+# - ansible_operator_meta.namespace
+# - ansible_operator_meta.name (from the name of the CR)
+
+- hosts: localhost
+  gather_facts: no
+  tasks:
+  - name: Set up PostgreSQL
+    include_role:
+      name: ../roles/postgresql-ocp
+    vars:
+      _postgresql_namespace: "{{ ansible_operator_meta.namespace }}"
+      _postgresql_name: "postgresql-{{ ansible_operator_meta.name }}"
+      _postgresql_database_name: "giteadb"
+      _postgresql_user: "giteauser"
+      _postgresql_password: "giteapassword"
+      _postgresql_volume_size: "{{ postgresql_volume_size|default('4Gi') }}"
+      _postgresql_image: "{{ postgresql_image | default('registry.redhat.io/rhel8/postgresql-12') }}"
+      _postgresql_image_tag: "{{ postgresql_image_tag|default('latest') }}"
+      _postgresql_memory_request: "{{ postgresql_memory_request | default('512Mi') }}"
+      _postgresql_memory_limit: "{{ postgresql_memory_limit | default('512Mi') }}"
+      _postgresql_cpu_request: "{{ postgresql_cpu_request | default('200m') }}"
+      _postgresql_cpu_limit: "{{ postgresql_cpu_request | default('500m') }}"
+
+  - name: Set up Gitea
+    include_role:
+      name: ../roles/gitea-ocp
+    vars:
+      _gitea_namespace: "{{ ansible_operator_meta.namespace }}"
+      _gitea_name: "{{ gitea_service_name | default( ansible_operator_meta.name ) }}"
+      _gitea_ssl: "{{ gitea_ssl | default(False) | bool }}"
+      _gitea_route: "{{ gitea_route | default('') }}"
+      _gitea_image: "{{ gitea_image | default('quay.io/gpte-devops-automation/gitea') }}"
+      _gitea_image_tag: "{{ gitea_image_tag | default('latest') }}"
+      _gitea_volume_size: "{{ gitea_volume_size | default('4Gi') }}"
+      _gitea_memory_request: "{{ gitea_memory_request | default('1Gi') }}"
+      _gitea_memory_limit: "{{ gitea_memory_limit | default('1Gi') }}"
+      _gitea_cpu_request: "{{ gitea_cpu_request | default('200m') }}"
+      _gitea_cpu_limit: "{{ gitea_cpu_request | default('500m') }}"
+      _gitea_postgresql_service_name: "postgresql-{{ ansible_operator_meta.name }}"
+      _gitea_postgresql_database_name: giteadb
+      _gitea_postgresql_user: giteauser
+      _gitea_postgresql_password: giteapassword

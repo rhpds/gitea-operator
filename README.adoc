@@ -1,0 +1,6 @@
+= Gitea Operator
+
+This repository holds the source code for the Red Hat GPTE Gitea Operator. It can be recreated by following the steps in https://github.com/redhat-cop/openshift-lab-origin/blob/master/OpenShift4/Ansible_Operator_1.0.adoc.
+
+To simply build a new version of the operator run the shell script `build.sh`.
+

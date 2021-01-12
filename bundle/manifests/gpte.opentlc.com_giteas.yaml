@@ -1,0 +1,119 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  name: giteas.gpte.opentlc.com
+spec:
+  group: gpte.opentlc.com
+  names:
+    kind: Gitea
+    listKind: GiteaList
+    plural: giteas
+    singular: gitea
+  scope: Namespaced
+  versions:
+  - name: v1
+    schema:
+      openAPIV3Schema:
+        description: Gitea is the Schema for the giteas API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: Spec defines the desired state of Gitea
+            properties:
+              gitea_image:
+                description: Container image for Gitea. Default is 'quay.io/gpte-devops-automation/gitea'.
+                type: string
+              gitea_image_tag:
+                description: Image tag for the Gitea container image. Default is 'latest'.
+                type: string
+              giteaCpuLimit:
+                additionalProperties:
+                  anyOf:
+                  - type: integer
+                  - type: string
+                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                  x-kubernetes-int-or-string: true
+                description: CPU limit for Gitea. Default is '500m'.
+                type: object
+              giteaCpuRequest:
+                additionalProperties:
+                  anyOf:
+                  - type: integer
+                  - type: string
+                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                  x-kubernetes-int-or-string: true
+                description: CPU request for Gitea. Default is '200m'.
+                type: object
+              giteaMemoryLimit:
+                description: Memory limit for Gitea. Default is '1Gi'.
+                type: string
+              giteaMemoryRequest:
+                description: Memory request for Gitea. Default is '1Gi'.
+                type: string
+              giteaRoute:
+                description: Specify the whole Route URL for the Gitea Route. Default is ''.
+                type: string
+              giteaSsl:
+                description: Create an HTTPS terminated route for Gitea. Default is 'false'
+                type: boolean
+              giteaVolumeSize:
+                description: Size of the Persistent Volume Claim for Gitea. Default is '4Gi'.
+                type: string
+              postgresql_image:
+                description: Container image for the PostgreSQL database. Default is 'registry.redhat.io/rhel8/postgresql-12'.
+                type: string
+              postgresql_image_tag:
+                description: Image tag for the PostgreSQL container image. Default is 'latest'.
+                type: string
+              postgresqlCpuLimit:
+                additionalProperties:
+                  anyOf:
+                  - type: integer
+                  - type: string
+                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                  x-kubernetes-int-or-string: true
+                description: CPU limit for the PostgreSQL database. Default is '500m'.
+                type: object
+              postgresqlCpuRequest:
+                additionalProperties:
+                  anyOf:
+                  - type: integer
+                  - type: string
+                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                  x-kubernetes-int-or-string: true
+                description: CPU request for the PostgreSQL database. Default is '200m'.
+                type: object
+              postgresqlMemoryLimit:
+                description: Memory limit for the PostgreSQL database. Default is '512Mi'.
+                type: string
+              postgresqlMemoryRequest:
+                description: Memory request for the PostgreSQL database. Default is '512Mi'.
+                type: string
+              postgresqlVolumeSize:
+                description: Size of the Persistent Volume Claim for the PostgreSQL database. Default is '4Gi'.
+                type: string
+            type: object
+            x-kubernetes-preserve-unknown-fields: true
+          status:
+            description: Status defines the observed state of Gitea
+            type: object
+            x-kubernetes-preserve-unknown-fields: true
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: null
+  storedVersions: null

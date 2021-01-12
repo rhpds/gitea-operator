@@ -1,0 +1,18 @@
+---
+# defaults file for postgresql-ocp
+_postgresql_state: present
+_postgresql_namespace: postgresql
+_postgresql_name: postgresql
+
+_postgresql_database_name: postgresql
+_postgresql_user: postgresql
+_postgresql_password: postgresql
+_postgresql_volume_size: 1Gi
+_postgresql_memory_request: 512Mi
+_postgresql_memory_limit: 512Mi
+_postgresql_cpu_request: 200m
+_postgresql_cpu_limit: 500m
+
+_postgresql_wait_for_init: true
+_postgresql_image: registry.redhat.io/rhel8/postgresql-12
+_postgresql_image_tag: latest

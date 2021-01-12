@@ -1,0 +1,7 @@
+resources:
+- ../default
+- ../samples
+- ../scorecard
+
+transformers:
+- ./patches/transformer-patches-icon.yaml

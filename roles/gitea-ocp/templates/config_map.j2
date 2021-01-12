@@ -1,0 +1,77 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: "{{ _gitea_name }}-config"
+  namespace: "{{ _gitea_namespace }}"
+data:
+  app.ini: |
+    APP_NAME = {{ _gitea_name }}
+    RUN_MODE = prod
+    RUN_USER = gitea
+
+    [security]
+    INTERNAL_TOKEN      = ${GITEA_INTERNAL_TOKEN}
+    INSTALL_LOCK        = true
+    SECRET_KEY          = ${GITEA_SECRET_KEY}
+    PASSWORD_COMPLEXITY = off
+
+    [oauth2]
+    ENABLE = false
+
+    [database]
+    DB_TYPE  = postgres
+    HOST     = {{ _gitea_postgresql_service_name }}:{{ _gitea_postgresql_port }}
+    NAME     = {{ _gitea_postgresql_database_name }}
+    USER     = {{ _gitea_postgresql_user }}
+    PASSWD   = {{ _gitea_postgresql_password }}
+    SSL_MODE = disable
+
+    [repository]
+    ROOT = /gitea-repositories
+
+    [server]
+    ROOT_URL         = {{ 'http' if not _gitea_ssl|d(False)|bool else 'https' }}://{{ _gitea_actual_route }}/
+    SSH_DOMAIN       = {{ _gitea_actual_route }}
+    DOMAIN           = {{ _gitea_actual_route }}
+    HTTP_PORT        = 3000
+    SSH_PORT         = 2022
+    DISABLE_SSH      = false
+    START_SSH_SERVER = true
+    LFS_START_SERVER = false
+    OFFLINE_MODE     = false
+
+    [mailer]
+    ENABLED = false
+
+    [service]
+    REGISTER_EMAIL_CONFIRM            = false
+    ENABLE_NOTIFY_MAIL                = false
+    DISABLE_REGISTRATION              = false
+    ENABLE_CAPTCHA                    = false
+    REQUIRE_SIGNIN_VIEW               = false
+    DEFAULT_KEEP_EMAIL_PRIVATE        = false
+    DEFAULT_ALLOW_CREATE_ORGANIZATION = true
+    DEFAULT_ENABLE_TIMETRACKING       = true
+    NO_REPLY_ADDRESS                  = noreply.example.org
+
+    [picture]
+    DISABLE_GRAVATAR        = false
+    ENABLE_FEDERATED_AVATAR = true
+
+    [openid]
+    ENABLE_OPENID_SIGNIN = false
+    ENABLE_OPENID_SIGNUP = false
+
+    [session]
+    PROVIDER = file
+
+    [log]
+    MODE      = file
+    LEVEL     = Info
+    ROOT_PATH = /home/gitea/log
+
+    [markup.asciidoc]
+    ENABLED = true
+    FILE_EXTENSIONS = .adoc,.asciidoc
+    RENDER_COMMAND = "asciidoc --out-file=- -"
+    IS_INPUT_FILE = false

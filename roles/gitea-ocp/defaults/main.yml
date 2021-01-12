@@ -1,0 +1,27 @@
+---
+# defaults file for gitea-ocp
+_gitea_state: present
+_gitea_namespace: gitea
+_gitea_name: gitea
+
+_gitea_ssl: False
+_gitea_port: 3000
+_gitea_postgresql_database_name: postgresql
+_gitea_postgresql_port: 5432
+_gitea_postgresql_service_name: postgresql
+_gitea_postgresql_user: postgresql
+_gitea_postgresql_password: postgresql
+_gitea_volume_size: 1Gi
+_gitea_memory_request: 1Gi
+_gitea_memory_limit: 1Gi
+_gitea_cpu_request: 200m
+_gitea_cpu_limit: 500m
+_gitea_wait_for_init: true
+_gitea_image: quay.io/gpte-devops-automation/gitea
+_gitea_image_tag: latest
+
+# Set to a valid route for the cluster to make a nicer route than svc-project.apps. Leave empty for default route
+_gitea_route: ""
+
+# Internal variable. Do not change
+_gitea_actual_route: ""

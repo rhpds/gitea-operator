@@ -1,0 +1,14 @@
+galaxy_info:
+  author: Wolfgang Kulhanek
+  description: Role to set up PostgreSQL on an OpenShift (Kubernetes) Cluster
+  company: Red Hat
+  license: Apache
+  min_ansible_version: 2.6
+  galaxy_tags:
+    - openshift
+    - kubernetes
+    - k8s
+    - ansible-operator
+    - postgresql
+    - database
+dependencies: []

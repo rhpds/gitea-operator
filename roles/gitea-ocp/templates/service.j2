@@ -1,0 +1,17 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: "{{ _gitea_name }}"
+  namespace: "{{ _gitea_namespace }}"
+  labels:
+    app: "{{ _gitea_name }}"
+spec:
+  selector:
+    app: "{{ _gitea_name }}"
+  ports:
+  - name: gitea
+    port: 3000
+    protocol: TCP
+    targetPort: 3000
+  sessionAffinity: None
+  type: ClusterIP

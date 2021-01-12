@@ -1,0 +1,24 @@
+# permissions for end users to edit giteas.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: gitea-editor-role
+rules:
+- apiGroups:
+  - gpte.opentlc.com
+  resources:
+  - giteas
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - gpte.opentlc.com
+  resources:
+  - giteas/status
+  verbs:
+  - get

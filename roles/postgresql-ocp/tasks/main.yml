@@ -1,0 +1,31 @@
+---
+# tasks file for postgresql-ocp
+
+- name: Set OpenShift Objects for Postgresql to {{ _postgresql_state }}
+  k8s:
+    state: "{{ _postgresql_state }}"
+    merge_type:
+    - strategic-merge
+    - merge
+    definition: "{{ lookup('template', item ) | from_yaml }}"
+  loop:
+  - ./templates/secret.j2
+  - ./templates/service.j2
+  - ./templates/persistent_volume_claim.j2
+  - ./templates/deployment.j2
+
+- name: Wait until application is available
+  when:
+    - _postgresql_state == "present"
+    - _postgresql_wait_for_init|bool
+  k8s_facts:
+    api_version: apps/v1
+    kind: Deployment
+    name: "{{ _postgresql_name }}"
+    namespace: "{{ _postgresql_namespace }}"
+  register: r_deployment
+  until:
+  - r_deployment.resources[0].status.availableReplicas is defined
+  - r_deployment.resources[0].status.availableReplicas == 1
+  retries: 50
+  delay: 10

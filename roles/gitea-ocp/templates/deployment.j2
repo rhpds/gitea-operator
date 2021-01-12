@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ _gitea_name }}"
+  namespace: "{{ _gitea_namespace }}"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "{{ _gitea_name }}"
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: "{{ _gitea_name }}"
+    spec:
+      serviceAccountName: "{{ _gitea_name }}"
+      containers:
+      - name: gitea
+        image: "{{ _gitea_image }}:{{ _gitea_image_tag }}"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3000
+            scheme: HTTP
+          initialDelaySeconds: 10
+          timeoutSeconds: 1
+          periodSeconds: 20
+          successThreshold: 1
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3000
+            scheme: HTTP
+          initialDelaySeconds: 10
+          timeoutSeconds: 1
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+        resources:
+          requests:
+            cpu: "{{ _gitea_cpu_request }}"
+            memory: "{{ _gitea_memory_request}}"
+          limits:
+            cpu: "{{ _gitea_cpu_limit}}"
+            memory: "{{ _gitea_memory_limit }}"
+        volumeMounts:
+        - name: gitea-repositories
+          mountPath: /gitea-repositories
+        - name: gitea-config
+          mountPath: /home/gitea/conf
+      volumes:
+      - name: gitea-repositories
+        persistentVolumeClaim:
+          claimName: "{{ _gitea_name }}-pvc"
+      - name: gitea-config
+        configMap:
+          name: "{{ _gitea_name }}-config"
+          items:
+            - key: app.ini
+              path: app.ini

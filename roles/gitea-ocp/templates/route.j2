@@ -1,0 +1,19 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: "{{ _gitea_name }}"
+  namespace: "{{ _gitea_namespace }}"
+  labels:
+    app: "{{ _gitea_name }}"
+spec:
+  to:
+    kind: Service
+    name: "{{ _gitea_name }}"
+{% if _gitea_route|d("") != "" %}
+  host: "{{ _gitea_route }}"
+{% endif %}
+{% if _gitea_ssl|d(False)|bool %}
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+{% endif %}
