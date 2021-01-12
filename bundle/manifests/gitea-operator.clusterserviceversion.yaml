@@ -155,7 +155,7 @@ spec:
                 env:
                 - name: ANSIBLE_GATHERING
                   value: explicit
-                image: quay.io/wkulhanek/gitea-operator:v1.0.0
+                image: quay.io/gpte-devops-automation/gitea-operator:v1.0.0
                 name: manager
                 resources: {}
               terminationGracePeriodSeconds: 10
