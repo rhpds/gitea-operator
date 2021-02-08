@@ -7,3 +7,4 @@ spec:
   sourceType: grpc
   image: quay.io/gpte-devops-automation/gitea-catalog:v1.0.0
   displayName: Red Hat GPTE
+  publisher: Red Hat GPTE
