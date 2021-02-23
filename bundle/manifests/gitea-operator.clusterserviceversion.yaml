@@ -21,7 +21,7 @@ metadata:
     capabilities: Basic Install
     operators.operatorframework.io/builder: operator-sdk-v1.3.0
     operators.operatorframework.io/project_layout: ansible.sdk.operatorframework.io/v1
-  name: gitea-operator.v1.0.1
+  name: gitea-operator.v1.0.3
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -102,6 +102,7 @@ spec:
           - route.openshift.io
           resources:
           - routes
+          - routes/custom-host
           verbs:
           - create
           - delete
@@ -155,7 +156,7 @@ spec:
                 env:
                 - name: ANSIBLE_GATHERING
                   value: explicit
-                image: quay.io/gpte-devops-automation/gitea-operator:v1.0.1
+                image: quay.io/gpte-devops-automation/gitea-operator:v1.0.3
                 name: manager
                 resources: {}
               terminationGracePeriodSeconds: 10
@@ -204,4 +205,4 @@ spec:
   provider:
     name: Red Hat GPTE
     url: www.redhat.com/partners
-  version: 1.0.1
+  version: 1.0.3

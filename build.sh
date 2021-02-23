@@ -1,16 +1,16 @@
 #!/bin/bash
 # This shell script builds a new container image for the Gitea Operator
-VERSION=1.0.1
+VERSION=1.0.3
 QUAY_ID=gpte-devops-automation
 QUAY_USER=gpte-devops-automation+giteaoperatorbuild
 
-echo "Logging in as ${QUAY_USER}. Please provide password when prompted."
-podman login -u ${QUAY_USER} quay.io
-if [[ "$?" != "0" ]];
-then
-  echo "Please ensure that QUAY_ID is logged into Quay successfully."
-  exit 1
-fi
+#echo "Logging in as ${QUAY_USER}. Please provide password when prompted."
+#podman login -u ${QUAY_USER} quay.io
+#if [[ "$?" != "0" ]];
+#then
+#  echo "Please ensure that QUAY_ID is logged into Quay successfully."
+#  exit 1
+#fi
 
 # Build Operator Container Image
 make docker-build IMG=quay.io/$QUAY_ID/gitea-operator:v${VERSION}

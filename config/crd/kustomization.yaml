@@ -4,5 +4,3 @@
 resources:
 - bases/gpte.opentlc.com_giteas.yaml
 # +kubebuilder:scaffold:crdkustomizeresource
-transformers:
-- ./patches/transformer-patches-openapi.yaml
