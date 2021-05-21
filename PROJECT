@@ -1,8 +1,16 @@
 domain: opentlc.com
-layout: ansible.sdk.operatorframework.io/v1
+layout:
+- ansible.sdk.operatorframework.io/v1
+plugins:
+  manifests.sdk.operatorframework.io/v2: {}
+  scorecard.sdk.operatorframework.io/v2: {}
 projectName: gitea-operator
 resources:
-- group: gpte
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: opentlc.com
+  group: gpte
   kind: Gitea
   version: v1
-version: 3-alpha
+version: "3"

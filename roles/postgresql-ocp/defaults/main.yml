@@ -8,6 +8,7 @@ _postgresql_database_name: postgresql
 _postgresql_user: postgresql
 _postgresql_password: postgresql
 _postgresql_volume_size: 1Gi
+_postgresql_volume_storage_class: ""
 _postgresql_memory_request: 512Mi
 _postgresql_memory_limit: 512Mi
 _postgresql_cpu_request: 200m

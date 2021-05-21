@@ -9,3 +9,7 @@ spec:
   resources:
     requests:
       storage: "{{ _postgresql_volume_size }}"
+{% if _postgresql_volume_storage_class | length > 0 %}
+  storageClassName: "{{ _postgresql_volume_storage_class }}"
+{% endif %}
+  volumeMode: Filesystem

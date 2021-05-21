@@ -22,13 +22,30 @@ spec:
       labels:
         control-plane: controller-manager
     spec:
+      securityContext:
+        runAsNonRoot: true
       containers:
-        - name: manager
-          args:
-            - "--enable-leader-election"
-            - "--leader-election-id=gitea-operator"
-          env:
-            - name: ANSIBLE_GATHERING
-              value: explicit
-          image: controller:latest
+      - args:
+        - --leader-elect
+        - --leader-election-id=gitea-operator
+        image: controller:latest
+        name: manager
+        env:
+        - name: ANSIBLE_GATHERING
+          value: explicit
+        securityContext:
+          allowPrivilegeEscalation: false
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 6789
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 6789
+          initialDelaySeconds: 5
+          periodSeconds: 10
+      serviceAccountName: controller-manager
       terminationGracePeriodSeconds: 10

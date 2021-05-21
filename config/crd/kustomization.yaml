@@ -3,4 +3,4 @@
 # It should be run by config/default
 resources:
 - bases/gpte.opentlc.com_giteas.yaml
-# +kubebuilder:scaffold:crdkustomizeresource
+#+kubebuilder:scaffold:crdkustomizeresource

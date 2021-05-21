@@ -18,6 +18,7 @@ Role Variables
 |_postgresql_user|postgresql|No|Database User Name
 |_postgresql_password|postgresql|No|Database Password
 |_postgresql_volume_size|1Gi|No|Size of Persistent Volume to be created
+|_postgresql_volume_storage_class|""|Storage class to use for the PostgreSQL volume. Default storage class is used when empty
 |_postgresql_memory_request|512Mi|No|Minimum Memory Requirement
 |_postgresql_memory_limit|512Mi|No|Maximum Memory Requirement
 |_postgresql_cpu_request|200m|No|Minimum CPU Requirement

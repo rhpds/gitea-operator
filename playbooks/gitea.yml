@@ -14,6 +14,7 @@
   gather_facts: no
   tasks:
   - name: Set up PostgreSQL
+    when: postgresql_setup | default(true) | bool
     include_role:
       name: ../roles/postgresql-ocp
     vars:
@@ -23,6 +24,7 @@
       _postgresql_user: "giteauser"
       _postgresql_password: "giteapassword"
       _postgresql_volume_size: "{{ postgresql_volume_size|default('4Gi') }}"
+      _postgresql_volume_storage_class: "{{ postgresql_volume_storage_class | default('') }}"
       _postgresql_image: "{{ postgresql_image | default('registry.redhat.io/rhel8/postgresql-12') }}"
       _postgresql_image_tag: "{{ postgresql_image_tag|default('latest') }}"
       _postgresql_memory_request: "{{ postgresql_memory_request | default('512Mi') }}"
@@ -41,11 +43,12 @@
       _gitea_image: "{{ gitea_image | default('quay.io/gpte-devops-automation/gitea') }}"
       _gitea_image_tag: "{{ gitea_image_tag | default('latest') }}"
       _gitea_volume_size: "{{ gitea_volume_size | default('4Gi') }}"
+      _gitea_volume_storage_class: "{{ gitea_volume_storage_class | default('') }}"
       _gitea_memory_request: "{{ gitea_memory_request | default('1Gi') }}"
       _gitea_memory_limit: "{{ gitea_memory_limit | default('1Gi') }}"
       _gitea_cpu_request: "{{ gitea_cpu_request | default('200m') }}"
       _gitea_cpu_limit: "{{ gitea_cpu_request | default('500m') }}"
-      _gitea_postgresql_service_name: "postgresql-{{ ansible_operator_meta.name }}"
+      _gitea_postgresql_service_name: "{{ postgresql_service_name | default( 'postgresql-'+ansible_operator_meta.name ) }}"
       _gitea_postgresql_database_name: giteadb
       _gitea_postgresql_user: giteauser
       _gitea_postgresql_password: giteapassword

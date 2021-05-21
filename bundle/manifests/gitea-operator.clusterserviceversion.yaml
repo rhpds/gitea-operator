@@ -11,7 +11,7 @@ metadata:
             "name": "repository"
           },
           "spec": {
-            "giteaImageTag": "1.13.1",
+            "giteaImageTag": "1.14.2",
             "giteaSsl": true,
             "giteaVolumeSize": "4Gi",
             "postgresqlVolumeSize": "4Gi"
@@ -19,9 +19,9 @@ metadata:
         }
       ]
     capabilities: Basic Install
-    operators.operatorframework.io/builder: operator-sdk-v1.3.0
+    operators.operatorframework.io/builder: operator-sdk-v1.6.1+git
     operators.operatorframework.io/project_layout: ansible.sdk.operatorframework.io/v1
-  name: gitea-operator.v1.0.3
+  name: gitea-operator.v1.0.4
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -30,7 +30,7 @@ spec:
     - kind: Gitea
       name: giteas.gpte.opentlc.com
       version: v1
-  description: Gitea Operator - Provided by Red Hat GPTE
+  description: Gitea Operator - provided by Red Hat GPTE
   displayName: Gitea Operator
   icon:
   - base64data: PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJtYWluX291dGxpbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIKCSB5PSIwcHgiIHZpZXdCb3g9IjAgMCA2NDAgNjQwIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA2NDAgNjQwOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxnPgoJPHBhdGggaWQ9InRlYWJhZyIgc3R5bGU9ImZpbGw6I0ZGRkZGRiIgZD0iTTM5NS45LDQ4NC4ybC0xMjYuOS02MWMtMTIuNS02LTE3LjktMjEuMi0xMS44LTMzLjhsNjEtMTI2LjljNi0xMi41LDIxLjItMTcuOSwzMy44LTExLjgKCQljMTcuMiw4LjMsMjcuMSwxMywyNy4xLDEzbC0wLjEtMTA5LjJsMTYuNy0wLjFsMC4xLDExNy4xYzAsMCw1Ny40LDI0LjIsODMuMSw0MC4xYzMuNywyLjMsMTAuMiw2LjgsMTIuOSwxNC40CgkJYzIuMSw2LjEsMiwxMy4xLTEsMTkuM2wtNjEsMTI2LjlDNDIzLjYsNDg0LjksNDA4LjQsNDkwLjMsMzk1LjksNDg0LjJ6Ii8+Cgk8Zz4KCQk8Zz4KCQkJPHBhdGggc3R5bGU9ImZpbGw6IzYwOTkyNiIgZD0iTTYyMi43LDE0OS44Yy00LjEtNC4xLTkuNi00LTkuNi00cy0xMTcuMiw2LjYtMTc3LjksOGMtMTMuMywwLjMtMjYuNSwwLjYtMzkuNiwwLjdjMCwzOS4xLDAsNzguMiwwLDExNy4yCgkJCQljLTUuNS0yLjYtMTEuMS01LjMtMTYuNi03LjljMC0zNi40LTAuMS0xMDkuMi0wLjEtMTA5LjJjLTI5LDAuNC04OS4yLTIuMi04OS4yLTIuMnMtMTQxLjQtNy4xLTE1Ni44LTguNQoJCQkJYy05LjgtMC42LTIyLjUtMi4xLTM5LDEuNWMtOC43LDEuOC0zMy41LDcuNC01My44LDI2LjlDLTQuOSwyMTIuNCw2LjYsMjc2LjIsOCwyODUuOGMxLjcsMTEuNyw2LjksNDQuMiwzMS43LDcyLjUKCQkJCWM0NS44LDU2LjEsMTQ0LjQsNTQuOCwxNDQuNCw1NC44czEyLjEsMjguOSwzMC42LDU1LjVjMjUsMzMuMSw1MC43LDU4LjksNzUuNyw2MmM2MywwLDE4OC45LTAuMSwxODguOS0wLjFzMTIsMC4xLDI4LjMtMTAuMwoJCQkJYzE0LTguNSwyNi41LTIzLjQsMjYuNS0yMy40czEyLjktMTMuOCwzMC45LTQ1LjNjNS41LTkuNywxMC4xLTE5LjEsMTQuMS0yOGMwLDAsNTUuMi0xMTcuMSw1NS4yLTIzMS4xCgkJCQlDNjMzLjIsMTU3LjksNjI0LjcsMTUxLjgsNjIyLjcsMTQ5Ljh6IE0xMjUuNiwzNTMuOWMtMjUuOS04LjUtMzYuOS0xOC43LTM2LjktMTguN1M2OS42LDMyMS44LDYwLDI5NS40CgkJCQljLTE2LjUtNDQuMi0xLjQtNzEuMi0xLjQtNzEuMnM4LjQtMjIuNSwzOC41LTMwYzEzLjgtMy43LDMxLTMuMSwzMS0zLjFzNy4xLDU5LjQsMTUuNyw5NC4yYzcuMiwyOS4yLDI0LjgsNzcuNywyNC44LDc3LjcKCQkJCVMxNDIuNSwzNTkuOSwxMjUuNiwzNTMuOXogTTQyNS45LDQ2MS41YzAsMC02LjEsMTQuNS0xOS42LDE1LjRjLTUuOCwwLjQtMTAuMy0xLjItMTAuMy0xLjJzLTAuMy0wLjEtNS4zLTIuMWwtMTEyLjktNTUKCQkJCWMwLDAtMTAuOS01LjctMTIuOC0xNS42Yy0yLjItOC4xLDIuNy0xOC4xLDIuNy0xOC4xTDMyMiwyNzNjMCwwLDQuOC05LjcsMTIuMi0xM2MwLjYtMC4zLDIuMy0xLDQuNS0xLjVjOC4xLTIuMSwxOCwyLjgsMTgsMi44CgkJCQlsMTEwLjcsNTMuN2MwLDAsMTIuNiw1LjcsMTUuMywxNi4yYzEuOSw3LjQtMC41LDE0LTEuOCwxNy4yQzQ3NC42LDM2My44LDQyNS45LDQ2MS41LDQyNS45LDQ2MS41eiIvPgoJCQk8cGF0aCBzdHlsZT0iZmlsbDojNjA5OTI2IiBkPSJNMzI2LjgsMzgwLjFjLTguMiwwLjEtMTUuNCw1LjgtMTcuMywxMy44Yy0xLjksOCwyLDE2LjMsOS4xLDIwYzcuNyw0LDE3LjUsMS44LDIyLjctNS40CgkJCQljNS4xLTcuMSw0LjMtMTYuOS0xLjgtMjMuMWwyNC00OS4xYzEuNSwwLjEsMy43LDAuMiw2LjItMC41YzQuMS0wLjksNy4xLTMuNiw3LjEtMy42YzQuMiwxLjgsOC42LDMuOCwxMy4yLDYuMQoJCQkJYzQuOCwyLjQsOS4zLDQuOSwxMy40LDcuM2MwLjksMC41LDEuOCwxLjEsMi44LDEuOWMxLjYsMS4zLDMuNCwzLjEsNC43LDUuNWMxLjksNS41LTEuOSwxNC45LTEuOSwxNC45CgkJCQljLTIuMyw3LjYtMTguNCw0MC42LTE4LjQsNDAuNmMtOC4xLTAuMi0xNS4zLDUtMTcuNywxMi41Yy0yLjYsOC4xLDEuMSwxNy4zLDguOSwyMS4zYzcuOCw0LDE3LjQsMS43LDIyLjUtNS4zCgkJCQljNS02LjgsNC42LTE2LjMtMS4xLTIyLjZjMS45LTMuNywzLjctNy40LDUuNi0xMS4zYzUtMTAuNCwxMy41LTMwLjQsMTMuNS0zMC40YzAuOS0xLjcsNS43LTEwLjMsMi43LTIxLjMKCQkJCWMtMi41LTExLjQtMTIuNi0xNi43LTEyLjYtMTYuN2MtMTIuMi03LjktMjkuMi0xNS4yLTI5LjItMTUuMnMwLTQuMS0xLjEtNy4xYy0xLjEtMy4xLTIuOC01LjEtMy45LTYuM2M0LjctOS43LDkuNC0xOS4zLDE0LjEtMjkKCQkJCWMtNC4xLTItOC4xLTQtMTIuMi02LjFjLTQuOCw5LjgtOS43LDE5LjctMTQuNSwyOS41Yy02LjctMC4xLTEyLjksMy41LTE2LjEsOS40Yy0zLjQsNi4zLTIuNywxNC4xLDEuOSwxOS44CgkJCQlDMzQzLjIsMzQ2LjUsMzM1LDM2My4zLDMyNi44LDM4MC4xeiIvPgoJCTwvZz4KCTwvZz4KPC9nPgo8L3N2Zz4K
@@ -123,7 +123,7 @@ spec:
           - subjectaccessreviews
           verbs:
           - create
-        serviceAccountName: default
+        serviceAccountName: gitea-operator-controller-manager
       deployments:
       - name: gitea-operator-controller-manager
         spec:
@@ -143,29 +143,49 @@ spec:
                 - --upstream=http://127.0.0.1:8080/
                 - --logtostderr=true
                 - --v=10
-                image: gcr.io/kubebuilder/kube-rbac-proxy:v0.5.0
+                image: registry.redhat.io/openshift4/ose-kube-rbac-proxy:v4.7.0
                 name: kube-rbac-proxy
                 ports:
                 - containerPort: 8443
                   name: https
                 resources: {}
               - args:
-                - --metrics-addr=127.0.0.1:8080
-                - --enable-leader-election
+                - --health-probe-bind-address=:6789
+                - --metrics-bind-address=127.0.0.1:8080
+                - --leader-elect
                 - --leader-election-id=gitea-operator
                 env:
                 - name: ANSIBLE_GATHERING
                   value: explicit
-                image: quay.io/gpte-devops-automation/gitea-operator:v1.0.3
+                image: quay.io/gpte-devops-automation/gitea-operator:v1.0.4
+                livenessProbe:
+                  httpGet:
+                    path: /healthz
+                    port: 6789
+                  initialDelaySeconds: 15
+                  periodSeconds: 20
                 name: manager
+                readinessProbe:
+                  httpGet:
+                    path: /readyz
+                    port: 6789
+                  initialDelaySeconds: 5
+                  periodSeconds: 10
                 resources: {}
+                securityContext:
+                  allowPrivilegeEscalation: false
+              securityContext:
+                runAsNonRoot: true
+              serviceAccountName: gitea-operator-controller-manager
               terminationGracePeriodSeconds: 10
       permissions:
       - rules:
         - apiGroups:
           - ""
+          - coordination.k8s.io
           resources:
           - configmaps
+          - leases
           verbs:
           - get
           - list
@@ -181,7 +201,7 @@ spec:
           verbs:
           - create
           - patch
-        serviceAccountName: default
+        serviceAccountName: gitea-operator-controller-manager
     strategy: deployment
   installModes:
   - supported: false
@@ -205,4 +225,4 @@ spec:
   provider:
     name: Red Hat GPTE
     url: www.redhat.com/partners
-  version: 1.0.3
+  version: 1.0.4

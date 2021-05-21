@@ -5,7 +5,11 @@ metadata:
   namespace: "{{ _gitea_namespace }}"
 spec:
   accessModes:
-    - ReadWriteOnce
+  - ReadWriteOnce
   resources:
     requests:
       storage: "{{ _gitea_volume_size }}"
+{% if _gitea_volume_storage_class | length > 0 %}
+  storageClassName: "{{ _gitea_volume_storage_class }}"
+{% endif %}
+  volumeMode: Filesystem

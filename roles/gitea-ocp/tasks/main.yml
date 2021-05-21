@@ -8,10 +8,10 @@
     - merge
     definition: "{{ lookup('template', item ) | from_yaml }}"
   loop:
-  - ./templates/service_account.j2
-  - ./templates/service.j2
-  - ./templates/route.j2
-  - ./templates/persistent_volume_claim.j2
+  - ./templates/service_account.yaml.j2
+  - ./templates/service.yaml.j2
+  - ./templates/route.yaml.j2
+  - ./templates/persistent_volume_claim.yaml.j2
 
 # Get Gitea Route
 - name: Get Gitea Route Hostname
@@ -38,8 +38,8 @@
     - merge
     definition: "{{ lookup('template', item ) | from_yaml }}"
   loop:
-  - ./templates/config_map.j2
-  - ./templates/deployment.j2
+  - ./templates/config_map.yaml.j2
+  - ./templates/deployment.yaml.j2
 
 - name: Wait until application is available
   when:

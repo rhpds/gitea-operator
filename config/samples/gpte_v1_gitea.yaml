@@ -4,6 +4,6 @@ metadata:
   name: repository
 spec:
   postgresqlVolumeSize: 4Gi
-  giteaImageTag: 1.13.1
+  giteaImageTag: 1.14.2
   giteaVolumeSize: 4Gi
   giteaSsl: True
