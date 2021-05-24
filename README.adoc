@@ -4,3 +4,21 @@ This repository holds the source code for the Red Hat GPTE Gitea Operator. It ca
 
 To simply build a new version of the operator run the shell script `build.sh`.
 
+oc new-project gitea
+oc new-app postgresql-persistent --param DATABASE_SERVICE_NAME=postgresql-gitea --param POSTGRESQL_USER=gitea_post --param POSTGRESQL_PASSWORD=gitea_pass --param POSTGRESQL_DATABASE=gitea --param VOLUME_CAPACITY=10Gi
+
+apiVersion: gpte.opentlc.com/v1
+kind: Gitea
+metadata:
+  name: wkgitea
+spec:
+  postgresqlSetup: false
+  giteaPostgresqlServiceName: postgresql-gitea
+  giteaPostgresqlDatabaseName: gitea
+  giteaPostgresqlUser: gitea_post
+  giteaPostgresqlPassword: gitea_pass
+  giteaImageTag: 1.14.2
+  giteaVolumeSize: 4Gi
+  giteaSsl: true
+  giteaAdminUser: opentlc-mgr
+  giteaDisableRegistration: true

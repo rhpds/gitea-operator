@@ -30,27 +30,38 @@ data:
     ROOT = /gitea-repositories
 
     [server]
-    ROOT_URL         = {{ 'http' if not _gitea_ssl|d(False)|bool else 'https' }}://{{ _gitea_actual_route }}/
+    ROOT_URL         = {{ 'http' if not _gitea_ssl | default(false) | bool else 'https' }}://{{ _gitea_actual_route }}/
     SSH_DOMAIN       = {{ _gitea_actual_route }}
     DOMAIN           = {{ _gitea_actual_route }}
-    HTTP_PORT        = 3000
-    SSH_PORT         = 2022
-    DISABLE_SSH      = false
-    START_SSH_SERVER = true
-    LFS_START_SERVER = false
-    OFFLINE_MODE     = false
+    HTTP_PORT        = {{ _gitea_http_port }}
+    SSH_PORT         = {{ _gitea_ssh_port }}
+    DISABLE_SSH      = {{ _gitea_disable_ssh | bool }}
+    START_SSH_SERVER = {{ _gitea_start_ssh_server | bool }}
+    LFS_START_SERVER = False
+    OFFLINE_MODE     = False
 
     [mailer]
-    ENABLED = false
+    ENABLED = {{ _gitea_mailer_enabled | bool }}
+    {% if _gitea_mailer_enabled | bool %}
+    FROM           = {{ _gitea_mailer_from }}
+    MAILER_TYPE    = {{ _gitea_mailer_type }}
+    HOST           = {{ _gitea_mailer_host }}
+    IS_TLS_ENABLED = {{ _gitea_mailer_tls | bool }}
+    USER           = {{ _gitea_mailer_user }}
+    PASSWD         = `{{ _gitea_mailer_password }}`
+    {%    if _gitea_mailer_helo_hostname | length > 0 %}
+    HELO_HOSTNAME  = {{ _gitea_mailer_helo_hostname }}
+    {%    endif %}
+    {% endif %}
 
     [service]
-    REGISTER_EMAIL_CONFIRM            = false
-    ENABLE_NOTIFY_MAIL                = false
-    DISABLE_REGISTRATION              = false
-    ENABLE_CAPTCHA                    = false
+    REGISTER_EMAIL_CONFIRM            = {{ _gitea_register_email_confirm | bool }}
+    ENABLE_NOTIFY_MAIL                = {{ _gitea_enable_notify_mail | bool }}
+    DISABLE_REGISTRATION              = {{ _gitea_disable_registration | bool }}
+    ENABLE_CAPTCHA                    = {{ _gitea_enable_captcha | bool }}
     REQUIRE_SIGNIN_VIEW               = false
     DEFAULT_KEEP_EMAIL_PRIVATE        = false
-    DEFAULT_ALLOW_CREATE_ORGANIZATION = true
+    DEFAULT_ALLOW_CREATE_ORGANIZATION = {{ _gitea_allow_create_organization | bool }}
     DEFAULT_ENABLE_TIMETRACKING       = true
     NO_REPLY_ADDRESS                  = noreply.example.org
 

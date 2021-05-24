@@ -17,12 +17,44 @@ _gitea_memory_request: 1Gi
 _gitea_memory_limit: 1Gi
 _gitea_cpu_request: 200m
 _gitea_cpu_limit: 500m
-_gitea_wait_for_init: true
 _gitea_image: quay.io/gpte-devops-automation/gitea
 _gitea_image_tag: latest
+
+# If Admin user is specified the Admin User will
+# be created. If not, or empty no admin user will be created
+# If no password is specified a password with specified length will be created
+_gitea_admin_user: opentlc-mgr
+_gitea_admin_password: ""
+_gitea_admin_password_length: 16
+_gitea_admin_email: "opentlc-mgr@open.redhat.com"
+
+# Gitea Settings
+_gitea_http_port: 3000
+_gitea_ssh_port: 2022
+_gitea_disable_ssh: false
+_gitea_start_ssh_server: true
+_gitea_disable_registration: false
+_gitea_enable_captcha: false
+_gitea_allow_create_organization: true
+
+# Gitea e-mail Setup
+_gitea_mailer_enabled: false
+_gitea_mailer_from: gitea@mydomain.com
+_gitea_mailer_type: smtp
+_gitea_mailer_host: mail.mydomain.com:587
+_gitea_mailer_tls: true
+_gitea_mailer_user: gitea@mydomain.com
+_gitea_mailer_password: password
+_gitea_mailer_helo_hostname: ""
+
+_gitea_register_email_confirm: false
+_gitea_enable_notify_mail: false
 
 # Set to a valid route for the cluster to make a nicer route than svc-project.apps. Leave empty for default route
 _gitea_route: ""
 
 # Internal variable. Do not change
 _gitea_actual_route: ""
+
+# Actual Gitea Admin Password
+_gitea_actual_admin_password: ""

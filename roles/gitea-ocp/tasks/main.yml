@@ -1,23 +1,22 @@
 ---
 # tasks file for Gitea
 - name: Set OpenShift Objects for Gitea to {{ _gitea_state }}
-  k8s:
+  community.kubernetes.k8s:
     state: "{{ _gitea_state }}"
     merge_type:
     - strategic-merge
     - merge
     definition: "{{ lookup('template', item ) | from_yaml }}"
   loop:
-  - ./templates/service_account.yaml.j2
-  - ./templates/service.yaml.j2
-  - ./templates/route.yaml.j2
-  - ./templates/persistent_volume_claim.yaml.j2
+  - service_account.yaml.j2
+  - service.yaml.j2
+  - route.yaml.j2
+  - persistent_volume_claim.yaml.j2
 
 # Get Gitea Route
 - name: Get Gitea Route Hostname
-  when:
-  - _gitea_state == "present"
-  k8s_facts:
+  when: _gitea_state == "present"
+  community.kubernetes.k8s_info:
     api_version: route.openshift.io/v1
     kind: Route
     name: "{{ _gitea_name }}"
@@ -25,27 +24,24 @@
   register: r_route
 
 - name: Store Gitea Route Hostname
-  when:
-  - _gitea_state == "present"
+  when: _gitea_state == "present"
   set_fact:
     _gitea_actual_route: "{{ r_route.resources[0].status.ingress[0].host }}"
 
 - name: Set Route dependant OpenShift Objects for Gitea to {{ _gitea_state }}
-  k8s:
+  community.kubernetes.k8s:
     state: "{{ _gitea_state }}"
     merge_type:
     - strategic-merge
     - merge
     definition: "{{ lookup('template', item ) | from_yaml }}"
   loop:
-  - ./templates/config_map.yaml.j2
-  - ./templates/deployment.yaml.j2
+  - config_map.yaml.j2
+  - deployment.yaml.j2
 
 - name: Wait until application is available
-  when:
-    - _gitea_state == "present"
-    - _gitea_wait_for_init|bool
-  k8s_facts:
+  when: _gitea_state == "present"
+  community.kubernetes.k8s_info:
     api_version: apps/v1
     kind: Deployment
     name: "{{ _gitea_name }}"
@@ -57,4 +53,88 @@
   retries: 50
   delay: 10
   ignore_errors: yes
-  
+
+- name: Retrieve Gitea resource
+  community.kubernetes.k8s_info:
+    api_version: gpte.opentlc.com/v1
+    kind: Gitea
+    name: "{{ _gitea_name }}"
+    namespace: "{{ _gitea_namespace }}"
+  register: r_gitea
+
+- name: Save route in custom resource status
+  operator_sdk.util.k8s_status:
+    api_version: gpte.opentlc.com/v1
+    kind: Gitea
+    name: "{{ _gitea_name }}"
+    namespace: "{{ _gitea_namespace }}"
+    status:
+      giteaRoute: "{{ 'http' if not _gitea_ssl | default(false) | bool else 'https' }}://{{ _gitea_actual_route }}"
+
+- name: Set up Admin User
+  when:
+  - r_gitea.resources[0].status.admin_password is not defined
+  - _gitea_admin_user | default("") | length > 0
+  block:
+  - name: Retrieve Gitea pod
+    community.kubernetes.k8s_info:
+      kind: Pod
+      namespace: "{{ _gitea_namespace }}"
+      label_selectors:
+      - app = {{ _gitea_name }}
+    register: r_gitea_pod
+
+  - name: Retrieve Gitea route
+    community.kubernetes.k8s_info:
+      kind: Route
+      api_version: route.openshift.io/v1
+      namespace: "{{ _gitea_namespace }}"
+      label_selectors:
+      - app = {{ _gitea_name }}
+    register: r_gitea_route
+
+  - name: Check if Gitea admin user already exists
+    uri:
+      url: "https://{{ r_gitea_route.resources[0].spec.host }}/api/v1/users/{{ _gitea_admin_user }}"
+      method: GET
+      validate_certs: false
+      status_code: 200, 404
+    register: r_gitea_admin_user
+    failed_when: r_gitea_admin_user.status != 200 and r_gitea_admin_user.status != 404
+
+  - name: Set up Gitea admin user
+    when: r_gitea_admin_user.status == 404
+    block:
+    - name: Set Admin password
+      when: _gitea_admin_password | default("") | length > 0
+      set_fact:
+        _gitea_actual_admin_password: "{{ _gitea_admin_password }}"
+
+    - name: Generate Admin password
+      when: _gitea_admin_password | default("") | length == 0
+      set_fact:
+        _gitea_actual_admin_password: >-
+          {{ lookup('password', '/dev/null length={{ _gitea_admin_password_length }} chars=ascii_letters,digits') }}
+
+    - name: Create Gitea admin user
+      community.kubernetes.k8s_exec:
+        namespace: "{{ _gitea_namespace }}"
+        pod: "{{ r_gitea_pod.resources[0].metadata.name }}"
+        command: >-
+          /usr/bin/giteacmd admin user create
+          --username {{ _gitea_admin_user }}
+          --password {{ _gitea_actual_admin_password }}
+          --email {{ _gitea_admin_email }}
+          --must-change-password=false
+          --admin
+      register: r_create_admin_user
+
+    - name: Save password in custom resource status
+      when: r_create_admin_user.return_code == 0
+      operator_sdk.util.k8s_status:
+        api_version: gpte.opentlc.com/v1
+        kind: Gitea
+        name: "{{ _gitea_name }}"
+        namespace: "{{ _gitea_namespace }}"
+        status:
+          adminPassword: "{{ _gitea_actual_admin_password }}"

@@ -19,10 +19,10 @@
       name: ../roles/postgresql-ocp
     vars:
       _postgresql_namespace: "{{ ansible_operator_meta.namespace }}"
-      _postgresql_name: "postgresql-{{ ansible_operator_meta.name }}"
-      _postgresql_database_name: "giteadb"
-      _postgresql_user: "giteauser"
-      _postgresql_password: "giteapassword"
+      _postgresql_name: "{{ postgresql_service_name | default ('postgresql-'+ansible_operator_meta.name) }}"
+      _postgresql_database_name: "{{ postgresql_database_name | default('giteadb') }}"
+      _postgresql_user: "{{ postgresql_user | default ('giteauser') }}"
+      _postgresql_password: "{{ postgresql_password | default('giteapassword') }}"
       _postgresql_volume_size: "{{ postgresql_volume_size|default('4Gi') }}"
       _postgresql_volume_storage_class: "{{ postgresql_volume_storage_class | default('') }}"
       _postgresql_image: "{{ postgresql_image | default('registry.redhat.io/rhel8/postgresql-12') }}"
@@ -38,7 +38,7 @@
     vars:
       _gitea_namespace: "{{ ansible_operator_meta.namespace }}"
       _gitea_name: "{{ gitea_service_name | default( ansible_operator_meta.name ) }}"
-      _gitea_ssl: "{{ gitea_ssl | default(False) | bool }}"
+      _gitea_ssl: "{{ gitea_ssl | default(false) | bool }}"
       _gitea_route: "{{ gitea_route | default('') }}"
       _gitea_image: "{{ gitea_image | default('quay.io/gpte-devops-automation/gitea') }}"
       _gitea_image_tag: "{{ gitea_image_tag | default('latest') }}"
@@ -48,7 +48,32 @@
       _gitea_memory_limit: "{{ gitea_memory_limit | default('1Gi') }}"
       _gitea_cpu_request: "{{ gitea_cpu_request | default('200m') }}"
       _gitea_cpu_limit: "{{ gitea_cpu_request | default('500m') }}"
-      _gitea_postgresql_service_name: "{{ postgresql_service_name | default( 'postgresql-'+ansible_operator_meta.name ) }}"
-      _gitea_postgresql_database_name: giteadb
-      _gitea_postgresql_user: giteauser
-      _gitea_postgresql_password: giteapassword
+
+      _gitea_postgresql_service_name: "{{ gitea_postgresql_service_name | default('postgresql-'+ansible_operator_meta.name) }}"
+      _gitea_postgresql_database_name: "{{ gitea_postgresql_database_name | default('giteadb') }}"
+      _gitea_postgresql_user: "{{ gitea_postgresql_user | default('giteauser') }}"
+      _gitea_postgresql_password: "{{ gitea_postgresql_password | default('giteapassword') }}"
+
+      _gitea_admin_user: "{{ gitea_admin_user | default('') }}"
+      _gitea_admin_password: "{{ gitea_admin_password | default('') }}"
+      _gitea_admin_password_length: "{{ gitea_admin_password_length | default(16) }}"
+      _gitea_admin_email: "{{ gitea_admin_email | default('notset@notset.org') }}"
+
+      _gitea_http_port: "{{ gitea_http_port | default(3000) }}"
+      _gitea_ssh_port: "{{ gitea_ssh_port | default(2022) }}"
+      _gitea_disable_ssh: "{{ gitea_disable_ssh | default(true) | bool }}"
+      _gitea_start_ssh_server: "{{ gitea_start_ssh_server | default(false) | bool }}"
+      _gitea_disable_registration: "{{ gitea_disable_registration | default(false) | bool }}"
+      _gitea_enable_captcha: "{{ gitea_enable_captcha | default(false) | bool }}"
+      _gitea_allow_create_organization: "{{ gitea_allow_create_organization | default(true) | bool }}"
+
+      _gitea_mailer_enabled: "{{ gitea_mailer_enabled | default(false) | bool }}"
+      _gitea_mailer_from: "{{ gitea_mailer_from | default('') }}"
+      _gitea_mailer_type: "{{ gitea_mailer_type | default('smtp') }}"
+      _gitea_mailer_host: "{{ gitea_mailer_host | default('') }}"
+      _gitea_mailer_tls: "{{ gitea_mailer_tls | default(true) | bool }}"
+      _gitea_mailer_user: "{{ gitea_mailer_user | default('') }}"
+      _gitea_mailer_password: "{{ gitea_mailer_password | default('') }}"
+      _gitea_mailer_helo_hostname: "{{ gitea_mailer_helo_hostname | default ('') }}"
+      _gitea_register_email_confirm: "{{ gitea_register_email_confirm | default(false) | bool }}"
+      _gitea_enable_notify_mail: "{{ gitea_enable_notify_mail | default(false) | bool }}"
