@@ -4,3 +4,11 @@
 resources:
 - bases/gpte.opentlc.com_giteas.yaml
 #+kubebuilder:scaffold:crdkustomizeresource
+
+patches:
+- path: ./patches/crd_openapi.yaml
+  target:
+    group: apiextensions.k8s.io
+    version: v1
+    kind: CustomResourceDefinition
+    name: giteas.gpte.opentlc.com
