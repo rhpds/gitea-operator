@@ -44,23 +44,19 @@ spec:
                 description: 'Allow users to create organizations in Gitea. Default: true'
                 type: boolean
               giteaCpuLimit:
-                additionalProperties:
-                  anyOf:
-                  - type: integer
-                  - type: string
-                  pattern: ^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$
-                  x-kubernetes-int-or-string: true
+                anyOf:
+                - type: integer
+                - type: string
                 description: CPU limit for Gitea. Default is '500m'.
-                type: object
+                pattern: ^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$
+                x-kubernetes-int-or-string: true
               giteaCpuRequest:
-                additionalProperties:
-                  anyOf:
-                  - type: integer
-                  - type: string
-                  pattern: ^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$
-                  x-kubernetes-int-or-string: true
+                anyOf:
+                - type: integer
+                - type: string
                 description: CPU request for Gitea. Default is '200m'.
-                type: object
+                pattern: ^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$
+                x-kubernetes-int-or-string: true
               giteaDisableRegistration:
                 description: 'Disable user self-registration. If this flag is set an Admin User should be specified to be created. Otherwise no users can be created at all. Default: false'
                 type: boolean
@@ -149,23 +145,19 @@ spec:
                 description: Storage Class to be used for the Gitea persistent volume claim. Default is empty - which will create a PVC using the currently available default storage class on the cluster.
                 type: string
               postgresqlCpuLimit:
-                additionalProperties:
-                  anyOf:
-                  - type: integer
-                  - type: string
-                  pattern: ^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$
-                  x-kubernetes-int-or-string: true
+                anyOf:
+                - type: integer
+                - type: string
                 description: CPU limit for the PostgreSQL database. Default is '500m'.
-                type: object
+                pattern: ^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$
+                x-kubernetes-int-or-string: true
               postgresqlCpuRequest:
-                additionalProperties:
-                  anyOf:
-                  - type: integer
-                  - type: string
-                  pattern: ^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$
-                  x-kubernetes-int-or-string: true
+                anyOf:
+                - type: integer
+                - type: string
                 description: CPU request for the PostgreSQL database. Default is '200m'.
-                type: object
+                pattern: ^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$
+                x-kubernetes-int-or-string: true
               postgresqlDatabaseName:
                 description: Name of the PostgreSQL Database to be created. Default is 'giteadb'.
                 type: string

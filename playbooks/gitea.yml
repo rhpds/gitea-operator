@@ -30,7 +30,7 @@
       _postgresql_memory_request: "{{ postgresql_memory_request | default('512Mi') }}"
       _postgresql_memory_limit: "{{ postgresql_memory_limit | default('512Mi') }}"
       _postgresql_cpu_request: "{{ postgresql_cpu_request | default('200m') }}"
-      _postgresql_cpu_limit: "{{ postgresql_cpu_request | default('500m') }}"
+      _postgresql_cpu_limit: "{{ postgresql_cpu_limit | default('500m') }}"
 
   - name: Set up Gitea
     include_role:
@@ -47,7 +47,7 @@
       _gitea_memory_request: "{{ gitea_memory_request | default('1Gi') }}"
       _gitea_memory_limit: "{{ gitea_memory_limit | default('1Gi') }}"
       _gitea_cpu_request: "{{ gitea_cpu_request | default('200m') }}"
-      _gitea_cpu_limit: "{{ gitea_cpu_request | default('500m') }}"
+      _gitea_cpu_limit: "{{ gitea_cpu_limit | default('500m') }}"
 
       _gitea_postgresql_service_name: "{{ gitea_postgresql_service_name | default('postgresql-'+ansible_operator_meta.name) }}"
       _gitea_postgresql_database_name: "{{ gitea_postgresql_database_name | default('giteadb') }}"

@@ -77,22 +77,18 @@ spec:
                 type: string
               postgresqlCpuRequest:
                 description: CPU request for the PostgreSQL database. Default is '200m'.
-                type: object
-                additionalProperties:
-                  anyOf:
-                  - type: integer
-                  - type: string
-                  pattern: "^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$"
-                  x-kubernetes-int-or-string: true
+                anyOf:
+                - type: integer
+                - type: string
+                pattern: "^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$"
+                x-kubernetes-int-or-string: true
               postgresqlCpuLimit:
                 description: CPU limit for the PostgreSQL database. Default is '500m'.
-                type: object
-                additionalProperties:
-                  anyOf:
-                  - type: integer
-                  - type: string
-                  pattern: "^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$"
-                  x-kubernetes-int-or-string: true
+                anyOf:
+                - type: integer
+                - type: string
+                pattern: "^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$"
+                x-kubernetes-int-or-string: true
 
               giteaServiceName:
                 description: Name of the Gitea Service to be deployed. Defaults to the name of the Gitea custom resource.
@@ -123,22 +119,18 @@ spec:
                 type: string
               giteaCpuRequest:
                 description: CPU request for Gitea. Default is '200m'.
-                type: object
-                additionalProperties:
-                  anyOf:
-                  - type: integer
-                  - type: string
-                  pattern: "^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$"
-                  x-kubernetes-int-or-string: true
+                anyOf:
+                - type: integer
+                - type: string
+                pattern: "^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$"
+                x-kubernetes-int-or-string: true
               giteaCpuLimit:
                 description: CPU limit for Gitea. Default is '500m'.
-                type: object
-                additionalProperties:
-                  anyOf:
-                  - type: integer
-                  - type: string
-                  pattern: "^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$"
-                  x-kubernetes-int-or-string: true
+                anyOf:
+                - type: integer
+                - type: string
+                pattern: "^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$"
+                x-kubernetes-int-or-string: true
 
               giteaPostgresqlServiceName:
                 description: 'Name of the PostgreSQL service. Only required when PostgreSQL is not set up by the operator. Default: postgresql- followed by the Gitea resource name.'
