@@ -21,7 +21,7 @@ metadata:
     capabilities: Basic Install
     operators.operatorframework.io/builder: operator-sdk-v1.6.1+git
     operators.operatorframework.io/project_layout: ansible.sdk.operatorframework.io/v1
-  name: gitea-operator.v1.2.1
+  name: gitea-operator.v1.2.2
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -157,7 +157,7 @@ spec:
                 env:
                 - name: ANSIBLE_GATHERING
                   value: explicit
-                image: quay.io/gpte-devops-automation/gitea-operator:v1.2.1
+                image: quay.io/gpte-devops-automation/gitea-operator:v1.2.2
                 livenessProbe:
                   httpGet:
                     path: /healthz
@@ -225,5 +225,5 @@ spec:
   provider:
     name: Red Hat GPTE
     url: www.redhat.com/partners
-  replaces: gitea-operator.v1.2.0
-  version: 1.2.1
+  replaces: gitea-operator.v1.2.1
+  version: 1.2.2

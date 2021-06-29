@@ -95,7 +95,7 @@
 
   - name: Check if Gitea admin user already exists
     uri:
-      url: "https://{{ r_gitea_route.resources[0].spec.host }}/api/v1/users/{{ _gitea_admin_user }}"
+      url: "{{ 'http' if not _gitea_ssl | default(false) | bool else 'https' }}://{{ r_gitea_route.resources[0].spec.host }}/api/v1/users/{{ _gitea_admin_user }}"
       method: GET
       validate_certs: false
       status_code: 200, 404
