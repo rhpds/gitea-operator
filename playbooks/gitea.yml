@@ -66,6 +66,7 @@
       _gitea_disable_registration: "{{ gitea_disable_registration | default(false) | bool }}"
       _gitea_enable_captcha: "{{ gitea_enable_captcha | default(false) | bool }}"
       _gitea_allow_create_organization: "{{ gitea_allow_create_organization | default(true) | bool }}"
+      _gitea_allow_local_network_migration: "{{ gitea_allow_local_network_migration | default(false) | bool }}"
 
       _gitea_mailer_enabled: "{{ gitea_mailer_enabled | default(false) | bool }}"
       _gitea_mailer_from: "{{ gitea_mailer_from | default('') }}"

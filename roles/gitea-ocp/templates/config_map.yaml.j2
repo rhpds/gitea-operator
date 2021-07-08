@@ -40,6 +40,11 @@ data:
     LFS_START_SERVER = False
     OFFLINE_MODE     = False
 
+{% if _gitea_allow_local_network_migration | bool %}
+    [migrations]
+    ALLOW_LOCALNETWORKS = true
+
+{% endif %}
     [mailer]
     ENABLED = {{ _gitea_mailer_enabled | bool }}
     {% if _gitea_mailer_enabled | bool %}
