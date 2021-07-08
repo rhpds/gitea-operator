@@ -36,6 +36,7 @@ _gitea_start_ssh_server: true
 _gitea_disable_registration: false
 _gitea_enable_captcha: false
 _gitea_allow_create_organization: true
+_gitea_allow_local_network_migration: false
 
 # Gitea e-mail Setup
 _gitea_mailer_enabled: false

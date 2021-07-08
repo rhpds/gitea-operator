@@ -39,7 +39,7 @@ kind: Gitea
 metadata:
   name: simple-gitea
 spec:
-  giteaImageTag: 1.14.2
+  giteaImageTag: 1.14.3
   giteaVolumeSize: 4Gi
   giteaSsl: true
   postgresqlVolumeSize: 4Gi
@@ -56,7 +56,7 @@ kind: Gitea
 metadata:
   name: simple-gitea-ocs
 spec:
-  giteaImageTag: 1.14.2
+  giteaImageTag: latest
   giteaVolumeSize: 4Gi
   giteaVolumeStorageClass: ocs-storagecluster-ceph-rbd
   giteaSsl: true
@@ -311,6 +311,9 @@ giteaEnableCaptcha:
   type: boolean
 giteaAllowCreateOrganization:
   description: 'Allow users to create organizations in Gitea. Default: true'
+  type: boolean
+giteaAllowLocalNetworkMigration:
+  description: 'Allow migration of repositories hosted on local network IPs as defined by RFC 1918, RFC 1122, RFC 4632 and RFC 4291. Default: false'
   type: boolean
 
 giteaMailerEnabled:

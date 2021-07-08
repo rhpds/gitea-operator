@@ -43,6 +43,9 @@ spec:
               giteaAllowCreateOrganization:
                 description: 'Allow users to create organizations in Gitea. Default: true'
                 type: boolean
+              giteaAllowLocalNetworkMigration:
+                description: 'Allow migration of repositories hosted on local network IPs as defined by RFC 1918, RFC 1122, RFC 4632 and RFC 4291. Default: false'
+                type: boolean
               giteaCpuLimit:
                 anyOf:
                 - type: integer
