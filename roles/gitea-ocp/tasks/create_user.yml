@@ -1,0 +1,44 @@
+---
+- name: Set the username as a fact for easy reuse (single user)
+  when: _gitea_user_number | int == 1
+  set_fact:
+    _gitea_user_name: "{{ _gitea_generate_user_format }}"
+
+- name: Set the username as a fact for easy reuse (multiple users)
+  when: _gitea_user_number | int > 1
+  set_fact:
+    _gitea_user_name: "{{ _gitea_generate_user_format | format( item ) }}"
+
+- name: Check if user exists
+  uri:
+    url: "{{ _gitea_actual_route_url }}/api/v1/users/{{ _gitea_user_name }}"
+    method: GET
+    validate_certs: false
+    user: "{{ _gitea_admin_user }}"
+    password: "{{ _gitea_actual_admin_password }}"
+    force_basic_auth: true
+    status_code: [ 200, 404 ]
+  register: r_gitea_insystem_user
+
+- name: Create the user
+  when: r_gitea_insystem_user.status == 404
+  uri:
+    url: "{{ _gitea_actual_route_url }}/api/v1/admin/users"
+    method: POST
+    body: "{{ body }}"
+    status_code: 201
+    body_format: json
+    validate_certs: false
+    user: "{{ _gitea_admin_user }}"
+    password: "{{ _gitea_actual_admin_password }}"
+    force_basic_auth: true
+  vars:
+    body: >-
+      {
+        "email": "{{ _gitea_user_name }}@{{ _gitea_user_email_domain }}",
+        "login_name": "{{ _gitea_user_name }}",
+        "must_change_password": false,
+        "password": "{{ _gitea_actual_user_password }}",
+        "send_notify": false,
+        "username": "{{ _gitea_user_name }}"
+      }

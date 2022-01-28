@@ -9,7 +9,8 @@ metadata:
 spec:
   apiservicedefinitions: {}
   customresourcedefinitions: {}
-  description: Gitea Operator - provided by Red Hat GPTE, see https://github.com/redhat-gpte-devopsautomation/gitea-operator for documentation.
+  description: Gitea Operator - provided by Red Hat GPTE, see https://github.com/redhat-gpte-devopsautomation/gitea-operator
+    for documentation.
   displayName: Gitea Operator
   icon:
   - base64data: ""

@@ -1,7 +1,7 @@
 ---
 # tasks file for Gitea
 - name: Set OpenShift Objects for Gitea to {{ _gitea_state }}
-  community.kubernetes.k8s:
+  kubernetes.core.k8s:
     state: "{{ _gitea_state }}"
     merge_type:
     - strategic-merge
@@ -16,7 +16,7 @@
 # Get Gitea Route
 - name: Get Gitea Route Hostname
   when: _gitea_state == "present"
-  community.kubernetes.k8s_info:
+  kubernetes.core.k8s_info:
     api_version: route.openshift.io/v1
     kind: Route
     name: "{{ _gitea_name }}"
@@ -26,10 +26,11 @@
 - name: Store Gitea Route Hostname
   when: _gitea_state == "present"
   set_fact:
-    _gitea_actual_route: "{{ r_route.resources[0].status.ingress[0].host }}"
+    _gitea_actual_route_url: "{{ 'http' if not _gitea_ssl | default(false) | bool else 'https' }}://{{ r_route.resources[0].status.ingress[0].host }}"
+    _gitea_actual_route_hostname: "{{ r_route.resources[0].status.ingress[0].host }}"
 
 - name: Set Route dependant OpenShift Objects for Gitea to {{ _gitea_state }}
-  community.kubernetes.k8s:
+  kubernetes.core.k8s:
     state: "{{ _gitea_state }}"
     merge_type:
     - strategic-merge
@@ -41,7 +42,7 @@
 
 - name: Wait until application is available
   when: _gitea_state == "present"
-  community.kubernetes.k8s_info:
+  kubernetes.core.k8s_info:
     api_version: apps/v1
     kind: Deployment
     name: "{{ _gitea_name }}"
@@ -52,10 +53,10 @@
   - r_deployment.resources[0].status.availableReplicas == 1
   retries: 50
   delay: 10
-  ignore_errors: yes
+  ignore_errors: true
 
 - name: Retrieve Gitea resource
-  community.kubernetes.k8s_info:
+  kubernetes.core.k8s_info:
     api_version: gpte.opentlc.com/v1
     kind: Gitea
     name: "{{ _gitea_name }}"
@@ -69,33 +70,25 @@
     name: "{{ _gitea_name }}"
     namespace: "{{ _gitea_namespace }}"
     status:
-      giteaRoute: "{{ 'http' if not _gitea_ssl | default(false) | bool else 'https' }}://{{ _gitea_actual_route }}"
+      giteaRoute: "{{ _gitea_actual_route_url }}"
+      giteaHostname: "{{ _gitea_actual_route_hostname }}"
 
-- name: Set up Admin User
+- name: Set up admin user
   when:
-  - r_gitea.resources[0].status.admin_password is not defined
+  - r_gitea.resources[0].status.adminSetupComplete is not defined
   - _gitea_admin_user | default("") | length > 0
   block:
   - name: Retrieve Gitea pod
-    community.kubernetes.k8s_info:
+    kubernetes.core.k8s_info:
       kind: Pod
       namespace: "{{ _gitea_namespace }}"
       label_selectors:
       - app = {{ _gitea_name }}
     register: r_gitea_pod
 
-  - name: Retrieve Gitea route
-    community.kubernetes.k8s_info:
-      kind: Route
-      api_version: route.openshift.io/v1
-      namespace: "{{ _gitea_namespace }}"
-      label_selectors:
-      - app = {{ _gitea_name }}
-    register: r_gitea_route
-
   - name: Check if Gitea admin user already exists
     uri:
-      url: "{{ 'http' if not _gitea_ssl | default(false) | bool else 'https' }}://{{ r_gitea_route.resources[0].spec.host }}/api/v1/users/{{ _gitea_admin_user }}"
+      url: "{{ _gitea_actual_route_url }}/api/v1/users/{{ _gitea_admin_user }}"
       method: GET
       validate_certs: false
       status_code: 200, 404
@@ -114,10 +107,10 @@
       when: _gitea_admin_password | default("") | length == 0
       set_fact:
         _gitea_actual_admin_password: >-
-          {{ lookup('password', '/dev/null length={{ _gitea_admin_password_length }} chars=ascii_letters,digits') }}
+          {{ lookup('password', '/dev/null length={{ _gitea_admin_password_length | default( 16 ) }} chars=ascii_letters,digits') }}
 
     - name: Create Gitea admin user
-      community.kubernetes.k8s_exec:
+      kubernetes.core.k8s_exec:
         namespace: "{{ _gitea_namespace }}"
         pod: "{{ r_gitea_pod.resources[0].metadata.name }}"
         command: >-
@@ -129,7 +122,7 @@
           --admin
       register: r_create_admin_user
 
-    - name: Save password in custom resource status
+    - name: Save admin password in custom resource status
       when: r_create_admin_user.return_code == 0
       operator_sdk.util.k8s_status:
         api_version: gpte.opentlc.com/v1
@@ -138,3 +131,71 @@
         namespace: "{{ _gitea_namespace }}"
         status:
           adminPassword: "{{ _gitea_actual_admin_password }}"
+          adminSetupComplete: true
+
+- name: Sanity check to only create users when admin user created
+  when:
+  - _gitea_create_users | bool
+  - _gitea_admin_user | default("") | length == 0
+  operator_sdk.util.k8s_status:
+    api_version: gpte.opentlc.com/v1
+    kind: Gitea
+    name: "{{ _gitea_name }}"
+    namespace: "{{ _gitea_namespace }}"
+    status:
+      userSetupError: "Error, can not create users without admin user."
+      userSetupComplete: true
+
+- name: Set up users in Gitea (only if admin user has been created also)
+  when:
+  - _gitea_create_users | bool
+  - _gitea_admin_user | default("") | length > 0
+  - r_gitea.resources[0].status.userSetupComplete is not defined
+  block:
+  - name: Set user password
+    when: _gitea_user_password | default("") | length > 0
+    set_fact:
+      _gitea_actual_user_password: "{{ _gitea_user_password }}"
+
+  - name: Generate user password
+    when: _gitea_user_password | default("") | length == 0
+    set_fact:
+      _gitea_actual_user_password: >-
+        {{ lookup('password', '/dev/null length={{ _gitea_user_password_length | default( 16 ) }} chars=ascii_letters,digits') }}
+
+  - name: Create the users in Gitea
+    include_tasks: create_user.yml
+    loop: "{{ range(1, _gitea_user_number | int + 1) | list }}"
+
+  - name: Save user password in custom resource status
+    operator_sdk.util.k8s_status:
+      api_version: gpte.opentlc.com/v1
+      kind: Gitea
+      name: "{{ _gitea_name }}"
+      namespace: "{{ _gitea_namespace }}"
+      status:
+        userPassword: "{{ _gitea_actual_user_password }}"
+        userSetupComplete: true
+
+  - name: Migrate the repositories for the Gitea users
+    when:
+    - _gitea_migrate_repositories | bool
+    - r_gitea.resources[0].status.repoMigrationComplete is not defined
+    block:
+    - name: Migrate repositories
+      include_tasks: migrate_repos.yml
+      loop: >-
+        {{
+        ( range(1, _gitea_user_number | int + 1) | list )
+        | product( _gitea_repositories_list )
+        | list
+        }}
+
+    - name: Save repo migration status in custom resource status
+      operator_sdk.util.k8s_status:
+        api_version: gpte.opentlc.com/v1
+        kind: Gitea
+        name: "{{ _gitea_name }}"
+        namespace: "{{ _gitea_namespace }}"
+        status:
+          repoMigrationComplete: true

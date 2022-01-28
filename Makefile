@@ -62,10 +62,10 @@ run: ansible-operator ## Run against the configured Kubernetes cluster in ~/.kub
 	$(ANSIBLE_OPERATOR) run
 
 docker-build: ## Build docker image with the manager.
-	docker build -t ${IMG} .
+	podman build -t ${IMG} .
 
 docker-push: ## Push docker image with the manager.
-	docker push ${IMG}
+	podman push ${IMG}
 
 ##@ Deployment
 
@@ -126,7 +126,7 @@ bundle: kustomize ## Generate bundle manifests and metadata, then validate gener
 
 .PHONY: bundle-build
 bundle-build: ## Build the bundle image.
-	docker build -f bundle.Dockerfile -t $(BUNDLE_IMG) .
+	podman build -f bundle.Dockerfile -t $(BUNDLE_IMG) .
 
 .PHONY: bundle-push
 bundle-push: ## Push the bundle image.

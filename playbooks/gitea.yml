@@ -59,6 +59,16 @@
       _gitea_admin_password_length: "{{ gitea_admin_password_length | default(16) }}"
       _gitea_admin_email: "{{ gitea_admin_email | default('notset@notset.org') }}"
 
+      _gitea_create_users: "{{ gitea_create_users | default(false) }}"
+      _gitea_user_number: "{{ gitea_user_number | default(2) }}"
+      _gitea_generate_user_format: "{{ gitea_generate_user_format | default('user%d') }}"
+      _gitea_user_email_domain: "{{ gitea_user_email_domain | default('example.com') }}"
+      _gitea_user_password: "{{ gitea_user_password | default('') }}"
+      _gitea_user_password_length: "{{ gitea_user_password_length | default(16) }}"
+
+      _gitea_migrate_repositories: "{{ gitea_migrate_repositories | default(false) }}"
+      _gitea_repositories_list: "{{ gitea_repositories_list | default([]) }}"
+
       _gitea_http_port: "{{ gitea_http_port | default(3000) }}"
       _gitea_ssh_port: "{{ gitea_ssh_port | default(2022) }}"
       _gitea_disable_ssh: "{{ gitea_disable_ssh | default(true) | bool }}"

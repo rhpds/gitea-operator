@@ -28,6 +28,29 @@ _gitea_admin_password: ""
 _gitea_admin_password_length: 16
 _gitea_admin_email: "opentlc-mgr@open.redhat.com"
 
+# Create users in Gitea. If set to true an Admin user *must* be created.
+_gitea_create_users: false
+# Format for the users to create. E.g. user1, user2, ...
+# When _gitea_user_number=1 specify just the
+# user name: e.g. lab-user
+_gitea_user_number: 2
+_gitea_generate_user_format: "user%d"
+_gitea_user_email_domain: example.com
+# If no password is specified a password with specified length will be created
+_gitea_user_password: openshift
+_gitea_user_password_length: 16
+
+# Set up repositories for all created users - also handled
+# by the workload, not the operator
+_gitea_migrate_repositories: false
+_gitea_repositories_list:
+- repo: "https://github.com/someuser/thing1"
+  name: "thing1"
+  private: "true"
+- repo: "https://github.com/anotheruser/someotherthing"
+  name: "someotherthing"
+  private: "false"
+
 # Gitea Settings
 _gitea_http_port: 3000
 _gitea_ssh_port: 2022
@@ -54,8 +77,17 @@ _gitea_enable_notify_mail: false
 # Set to a valid route for the cluster to make a nicer route than svc-project.apps. Leave empty for default route
 _gitea_route: ""
 
-# Internal variable. Do not change
-_gitea_actual_route: ""
+# Internal variables. Do not change
+# ---------------------------------
+# Actual Gitea route
+_gitea_actual_route_url: ""
+_gitea_actual_route_hostname: ""
 
-# Actual Gitea Admin Password
+# Actual Gitea admin password
 _gitea_actual_admin_password: ""
+
+# Gitea user name (for use in loops)
+_gitea_user_name: ""
+
+# Actual Gitea user password
+_gitea_actual_user_password: ""

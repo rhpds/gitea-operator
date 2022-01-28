@@ -1,6 +1,6 @@
 #!/bin/bash
 # This shell script builds a new container image for the Gitea Operator
-VERSION=1.0.4
+VERSION=1.2.9
 QUAY_ID=gpte-devops-automation
 QUAY_USER=gpte-devops-automation+giteaoperatorbuild
 

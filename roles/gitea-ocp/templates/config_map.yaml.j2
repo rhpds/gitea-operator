@@ -30,9 +30,9 @@ data:
     ROOT = /gitea-repositories
 
     [server]
-    ROOT_URL         = {{ 'http' if not _gitea_ssl | default(false) | bool else 'https' }}://{{ _gitea_actual_route }}/
-    SSH_DOMAIN       = {{ _gitea_actual_route }}
-    DOMAIN           = {{ _gitea_actual_route }}
+    ROOT_URL         = {{ _gitea_actual_route_url }}/
+    SSH_DOMAIN       = {{ _gitea_actual_route_hostname }}
+    DOMAIN           = {{ _gitea_actual_route_hostname }}
     HTTP_PORT        = {{ _gitea_http_port }}
     SSH_PORT         = {{ _gitea_ssh_port }}
     DISABLE_SSH      = {{ _gitea_disable_ssh | bool }}

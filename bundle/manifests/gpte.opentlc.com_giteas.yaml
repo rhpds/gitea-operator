@@ -18,10 +18,14 @@ spec:
         description: Gitea is the Schema for the giteas API
         properties:
           apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
             type: string
           kind:
-            description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
             type: string
           metadata:
             type: object
@@ -32,19 +36,29 @@ spec:
                 description: 'e-mail address for the Gitea Admin User. Default: "notset@notset.org"'
                 type: string
               giteaAdminPassword:
-                description: 'Password for the Gitea admin user. If not specified or empty a random password will be created with length of giteaAdminPasswordLength random ASCII characters. Default: ""'
+                description: 'Password for the Gitea admin user. If not specified
+                  or empty a random password will be created with length of giteaAdminPasswordLength
+                  random ASCII characters. Default: ""'
                 type: string
               giteaAdminPasswordLength:
-                description: 'If a giteaAdminUser is provided but no giteaAdminPassowrd is provided a random ASCII password with the length specified will be created. Default: 16'
-                type: string
+                description: 'If a giteaAdminUser is provided but no giteaAdminPassword
+                  is provided a random ASCII password with the length specified will
+                  be created. Default: 16'
+                type: integer
               giteaAdminUser:
-                description: 'User ID for the Admin User to be created. If not specified no admin user will be created. Note that if giteaDisableRegistration is set to false and no admin user will be created you will not be able to create any users for Gitea. Default: ""'
+                description: 'User ID for the Admin User to be created. If not specified
+                  no admin user will be created. Note that if giteaDisableRegistration
+                  is set to false and no admin user will be created you will not be
+                  able to create any users for Gitea. Default: ""'
                 type: string
               giteaAllowCreateOrganization:
-                description: 'Allow users to create organizations in Gitea. Default: true'
+                description: 'Allow users to create organizations in Gitea. Default:
+                  true'
                 type: boolean
               giteaAllowLocalNetworkMigration:
-                description: 'Allow migration of repositories hosted on local network IPs as defined by RFC 1918, RFC 1122, RFC 4632 and RFC 4291. Default: false'
+                description: 'Allow migration of repositories hosted on local network
+                  IPs as defined by RFC 1918, RFC 1122, RFC 4632 and RFC 4291. Default:
+                  false'
                 type: boolean
               giteaCpuLimit:
                 anyOf:
@@ -60,18 +74,34 @@ spec:
                 description: CPU request for Gitea. Default is '200m'.
                 pattern: ^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$
                 x-kubernetes-int-or-string: true
+              giteaCreateUsers:
+                description: 'Create users in Gitea. Only possible if an admin user
+                  is also being created. Default: false'
+                type: boolean
               giteaDisableRegistration:
-                description: 'Disable user self-registration. If this flag is set an Admin User should be specified to be created. Otherwise no users can be created at all. Default: false'
+                description: 'Disable user self-registration. If this flag is set
+                  an Admin User should be specified to be created. Otherwise no users
+                  can be created at all. Default: false'
                 type: boolean
               giteaDisableSsh:
                 description: 'Disable SSH for Gitea. Default: true'
                 type: boolean
               giteaEnableCaptcha:
-                description: 'Display Captcha when users are registering a new account. No effect if giteaDisableRegistration is set to false. Default: false'
+                description: 'Display Captcha when users are registering a new account.
+                  No effect if giteaDisableRegistration is set to false. Default:
+                  false'
                 type: boolean
               giteaEnableNotifyMail:
-                description: 'Send e-mail notifications to users for various tasks in Gitea. Requires the mailer to be configured correctly. Default: false'
+                description: 'Send e-mail notifications to users for various tasks
+                  in Gitea. Requires the mailer to be configured correctly. Default:
+                  false'
                 type: boolean
+              giteaGenerateUserFormat:
+                description: 'Format for user names to be created. This will be taken
+                  literally if only one user is to be created (e.g. lab-user). If
+                  more than one user is to be created the format needs to include
+                  a "%d" to set the user number. Default: "user%d"'
+                type: string
               giteaHttpPort:
                 description: 'Port for Gitea to listen on. Default: 3000'
                 type: integer
@@ -82,28 +112,36 @@ spec:
                 description: Image tag for the Gitea container image. Default is 'latest'.
                 type: string
               giteaMailerEnabled:
-                description: 'Enable e-mail integration for Gitea. If set to true the other giteaMailer* properties need to be provided. See https://docs.gitea.io/en-us/email-setup/ for example values. Default: false'
+                description: 'Enable e-mail integration for Gitea. If set to true
+                  the other giteaMailer* properties need to be provided. See https://docs.gitea.io/en-us/email-setup/
+                  for example values. Default: false'
                 type: boolean
               giteaMailerFrom:
-                description: 'E-mail integration. FROM e-mail address to be used. Default: ""'
+                description: 'E-mail integration. FROM e-mail address to be used.
+                  Default: ""'
                 type: string
               giteaMailerHeloHostname:
-                description: 'Helo Hostname for the e-mail server. Not required for all e-mail providers. Default: ""'
+                description: 'Helo Hostname for the e-mail server. Not required for
+                  all e-mail providers. Default: ""'
                 type: string
               giteaMailerHost:
                 description: 'Hostname of the e-mail server to be used. Default: ""'
                 type: string
               giteaMailerPassword:
-                description: 'Password for the User ID on the e-mail server to be used. May need to be an app-specific password if two-factor authentication is enabled on the e-mail server. Default: ""'
+                description: 'Password for the User ID on the e-mail server to be
+                  used. May need to be an app-specific password if two-factor authentication
+                  is enabled on the e-mail server. Default: ""'
                 type: string
               giteaMailerTls:
-                description: 'Use TLS encryption when connecting to the mailer host. Default: true'
+                description: 'Use TLS encryption when connecting to the mailer host.
+                  Default: true'
                 type: boolean
               giteaMailerType:
                 description: 'Type of e-mail provider to be used. Default: smtp'
                 type: string
               giteaMailerUser:
-                description: 'User ID on the e-mail server to use. Frequently the same as the value for giteaMailerFrom. Default: ""'
+                description: 'User ID on the e-mail server to use. Frequently the
+                  same as the value for giteaMailerFrom. Default: ""'
                 type: string
               giteaMemoryLimit:
                 description: Memory limit for Gitea. Default is '1Gi'.
@@ -111,41 +149,96 @@ spec:
               giteaMemoryRequest:
                 description: Memory request for Gitea. Default is '1Gi'.
                 type: string
+              giteaMigrateRepositories:
+                description: 'For created users migrate repositories from another
+                  location, e.g. GitHub. Default: false'
+                type: boolean
               giteaPostgresqlDatabaseName:
-                description: 'Name of the PostgreSQL database. Only required when PostgreSQL is not set up by the operator. Default: giteadb'
+                description: 'Name of the PostgreSQL database. Only required when
+                  PostgreSQL is not set up by the operator. Default: giteadb'
                 type: string
               giteaPostgresqlPassword:
-                description: 'PostgreSQL password. Only required when PostgreSQL is not set up by the operator. Default: giteapassword'
+                description: 'PostgreSQL password. Only required when PostgreSQL is
+                  not set up by the operator. Default: giteapassword'
                 type: string
               giteaPostgresqlServiceName:
-                description: 'Name of the PostgreSQL service. Only required when PostgreSQL is not set up by the operator. Default: postgresql- followed by the Gitea resource name.'
+                description: 'Name of the PostgreSQL service. Only required when PostgreSQL
+                  is not set up by the operator. Default: postgresql- followed by
+                  the Gitea resource name.'
                 type: string
               giteaPostgresqlUser:
-                description: 'Name of the PostgreSQL user. Only required when PostgreSQL is not set up by the operator. Default: giteauser'
+                description: 'Name of the PostgreSQL user. Only required when PostgreSQL
+                  is not set up by the operator. Default: giteauser'
                 type: string
               giteaRegisterEmailConfirm:
-                description: 'Send e-mail confirmation to users when self-registering. Users must click a link to validate their e-mail address before the account gets created. Requires the mailer to be configured correctly. Default: false'
+                description: 'Send e-mail confirmation to users when self-registering.
+                  Users must click a link to validate their e-mail address before
+                  the account gets created. Requires the mailer to be configured correctly.
+                  Default: false'
                 type: boolean
+              giteaRepositoriesList:
+                description: 'List of repositories to be created. Each repository
+                  is an array of "repo: <source URL", "name: <name of migrated repository>"
+                  and "private: true | false". Default: []'
+                items:
+                  properties:
+                    name:
+                      description: Name of the repository in Gitea.
+                      type: string
+                    private:
+                      description: Create private repository in Gitea.
+                      type: boolean
+                    repo:
+                      description: Source repository URL to clone.
+                      type: string
+                  type: object
+                type: array
               giteaRoute:
-                description: Specify the whole Route URL for the Gitea Route. Default is ''. Make sure the route is reachable from outside the cluster.
+                description: Specify the whole Route URL for the Gitea Route. Default
+                  is ''. Make sure the route is reachable from outside the cluster.
                 type: string
               giteaServiceName:
-                description: Name of the Gitea Service to be deployed. Defaults to the name of the Gitea custom resource.
+                description: Name of the Gitea Service to be deployed. Defaults to
+                  the name of the Gitea custom resource.
                 type: string
               giteaSshPort:
                 description: 'Port for Gitea to start an SSH server on. Default: 2022'
                 type: integer
               giteaSsl:
-                description: Create an HTTPS terminated route for Gitea. Default is 'false'
+                description: Create an HTTPS terminated route for Gitea. Default is
+                  'false'
                 type: boolean
               giteaStartSshServer:
                 description: 'Start SSH Server in the Gitea container. Default: false'
                 type: boolean
+              giteaUserEmailDomain:
+                description: 'e-mail domain for the created Gitea users. Default:
+                  "example.com"'
+                type: string
+              giteaUserNumber:
+                description: 'Number of users to create in Gitea. If 1 then only one
+                  user will be created with the username from giteaGenerateUserFormat.
+                  If more than one then users will be created according to the format
+                  in giteaGenerateUserFormat. Default: 2'
+                type: integer
+              giteaUserPassword:
+                description: 'Password for all created Gitea users. If not specified
+                  or empty a random password will be created with length of giteaUserPasswordLength
+                  random ASCII characters. Default: ""'
+                type: string
+              giteaUserPasswordLength:
+                description: 'If a giteaCreateUsers is set but no giteaUserPassowrd
+                  is provided a random ASCII password with the length specified will
+                  be created. Default: 16'
+                type: integer
               giteaVolumeSize:
-                description: Size of the persistent volume claim for Gitea. Default is '4Gi'.
+                description: Size of the persistent volume claim for Gitea. Default
+                  is '4Gi'.
                 type: string
               giteaVolumeStorageClass:
-                description: Storage Class to be used for the Gitea persistent volume claim. Default is empty - which will create a PVC using the currently available default storage class on the cluster.
+                description: Storage Class to be used for the Gitea persistent volume
+                  claim. Default is empty - which will create a PVC using the currently
+                  available default storage class on the cluster.
                 type: string
               postgresqlCpuLimit:
                 anyOf:
@@ -162,40 +255,53 @@ spec:
                 pattern: ^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$
                 x-kubernetes-int-or-string: true
               postgresqlDatabaseName:
-                description: Name of the PostgreSQL Database to be created. Default is 'giteadb'.
+                description: Name of the PostgreSQL Database to be created. Default
+                  is 'giteadb'.
                 type: string
               postgresqlImage:
-                description: Container image for the PostgreSQL database. Default is 'registry.redhat.io/rhel8/postgresql-12'.
+                description: Container image for the PostgreSQL database. Default
+                  is 'registry.redhat.io/rhel8/postgresql-12'.
                 type: string
               postgresqlImageTag:
-                description: Image tag for the PostgreSQL container image. Default is 'latest'.
+                description: Image tag for the PostgreSQL container image. Default
+                  is 'latest'.
                 type: string
               postgresqlMemoryLimit:
-                description: Memory limit for the PostgreSQL database. Default is '512Mi'.
+                description: Memory limit for the PostgreSQL database. Default is
+                  '512Mi'.
                 type: string
               postgresqlMemoryRequest:
-                description: Memory request for the PostgreSQL database. Default is '512Mi'.
+                description: Memory request for the PostgreSQL database. Default is
+                  '512Mi'.
                 type: string
               postgresqlPassword:
-                description: Password to be used for the PostgreSQL database user. Default is 'giteapassword'.
+                description: Password to be used for the PostgreSQL database user.
+                  Default is 'giteapassword'.
                 type: string
               postgresqlServiceName:
-                description: Name of the PostgreSQL database service. Default is 'postgresql-' followed by the name of the Gitea resource.
+                description: Name of the PostgreSQL database service. Default is 'postgresql-'
+                  followed by the name of the Gitea resource.
                 type: string
               postgresqlSetup:
-                description: |-
-                  Set up a PostgreSQL database alongside the Gitea instance. Default is true.
-                  If set to false the values for giteaPostgresqlServiceName, giteaPostgresqlDatabaseName, giteaPostgresqlUser and giteaPostgresqlPassword need to be specified to connect to an existing PostgreSQL database.
-                  If set to true no values need to be specified for database name, database service, database user and database service.
+                description: Set up a PostgreSQL database alongside the Gitea instance.
+                  Default is true. If set to false the values for giteaPostgresqlServiceName,
+                  giteaPostgresqlDatabaseName, giteaPostgresqlUser and giteaPostgresqlPassword
+                  need to be specified to connect to an existing PostgreSQL database.
+                  If set to true no values need to be specified for database name,
+                  database service, database user and database service.
                 type: boolean
               postgresqlUser:
-                description: Username to be created in the PostgreSQL database. Default is 'giteauser'.
+                description: Username to be created in the PostgreSQL database. Default
+                  is 'giteauser'.
                 type: string
               postgresqlVolumeSize:
-                description: Size of the persistent volume claim for the PostgreSQL database. Default is '4Gi'.
+                description: Size of the persistent volume claim for the PostgreSQL
+                  database. Default is '4Gi'.
                 type: string
               postgresqlVolumeStorageClass:
-                description: Storage Class to be used for the PostgreSQL persistent volume claim. Default is empty - which will create a PVC using the currently available default storage class on the cluster.
+                description: Storage Class to be used for the PostgreSQL persistent
+                  volume claim. Default is empty - which will create a PVC using the
+                  currently available default storage class on the cluster.
                 type: string
             type: object
             x-kubernetes-preserve-unknown-fields: true

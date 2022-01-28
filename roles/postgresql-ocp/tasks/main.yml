@@ -2,7 +2,7 @@
 # tasks file for postgresql-ocp
 
 - name: Set OpenShift Objects for Postgresql to {{ _postgresql_state }}
-  community.kubernetes.k8s:
+  kubernetes.core.k8s:
     state: "{{ _postgresql_state }}"
     merge_type:
     - strategic-merge
@@ -18,7 +18,7 @@
   when:
     - _postgresql_state == "present"
     - _postgresql_wait_for_init|bool
-  community.kubernetes.k8s_info:
+  kubernetes.core.k8s_info:
     api_version: apps/v1
     kind: Deployment
     name: "{{ _postgresql_name }}"

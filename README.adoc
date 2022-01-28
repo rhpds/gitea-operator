@@ -30,8 +30,8 @@ oc new-project gitea
 
 The Gitea Operator can set up a PostgreSQL database alongside the Gitea Pod. This is the default deployment.
 
-. To deploy a simple Gitea instance:
-+
+To deploy a simple Gitea instance:
+
 [source,yaml]
 ----
 apiVersion: gpte.opentlc.com/v1
@@ -39,16 +39,16 @@ kind: Gitea
 metadata:
   name: simple-gitea
 spec:
-  giteaImageTag: 1.14.3
+  giteaImageTag: 1.15.10
   giteaVolumeSize: 4Gi
   giteaSsl: true
   postgresqlVolumeSize: 4Gi
 ----
-+
+
 Note that you can specify specific properties for `postgresqlServiceName`, `postgresqlDatabaseName`, `postgresqlUser` and `postgresqlPassword`. If you do however you *must* also specify the relevant properties for Gitea to connect to the database and they must match the PostgreSQL properties: `giteaPostgresqlServiceName`, `giteaPostgresqlDatabaseName`, `giteaPostgresqlUser` and `giteaPostgresqlPassword`
 
-. To deploy a simple Gitea instance using OpenShift Container Storage (if the storage class `ocs-storagecluster-ceph-rbd` is not the default storage class):
-+
+To deploy a simple Gitea instance using OpenShift Container Storage (if the storage class `ocs-storagecluster-ceph-rbd` is not the default storage class):
+
 [source,yaml]
 ----
 apiVersion: gpte.opentlc.com/v1
@@ -66,12 +66,12 @@ spec:
 
 === Create Admin User
 
-. The Operator can create an Admin User in the Gitea instance. If a Admin User ID is specified you can specify a password for the admin user as well. If no password is specified a password is generated with a certain length. The length of the generated password can be set via the password length variable.
-+
-If a password has been generated the Operator will report the generated password in the `status` section of the `Gitea` custom resource.
-+
+The Operator can create an Admin User in the Gitea instance. If a Admin User ID is specified you can specify a password for the admin user as well. If no password is specified a password is generated with a certain length. The length of the generated password can be set via the password length variable.
+
 If an Admin user has been created then you can set the variable `giteaDisableRegistration: false`. This will disable user self-registration - only the admin user will be able to create other users on Gitea.
-+
+
+The operator will report the status of the admin user creation as well as the user password in the fields `.status.adminSetupComplete: true` and `.status.adminPassword`.
+
 [source,yaml]
 ----
 apiVersion: gpte.opentlc.com/v1
@@ -84,6 +84,92 @@ spec:
   giteaAdminPassword: ""
   giteaAdminPasswordLength: 32
   giteaAdminEmail: opentlc-mgr@redhat.com
+----
+
+=== Create regular users
+
+The Operator can also create regular users in the Gitea instance. It is a requirement that an admin user is also being created.
+
+The operator can create a single user - or a number of users based on a username template.
+
+You can specify a common password for all regular users. If no password is specified a password is generated with a certain length. The length of the generated password can be set via the password length variable.
+
+If an users have been created then you can set the variable `giteaDisableRegistration: false`. This will disable user self-registration - only the admin user will be able to create additional users on Gitea.
+
+The operator will report the status of the user creation as well as the user password in the fields `.status.userSetupComplete: true` and `.status.userPassword`.
+
+Create a single user, `lab-user` with a generated password of length 16:
+
+[source,yaml]
+----
+apiVersion: gpte.opentlc.com/v1
+kind: Gitea
+metadata:
+  name: gitea-with-admin
+spec:
+  giteaSsl: true
+  giteaAdminUser: opentlc-mgr
+  giteaAdminPassword: ""
+  giteaAdminPasswordLength: 32
+  giteaAdminEmail: opentlc-mgr@redhat.com
+  giteaCreateUsers: true
+  giteaGenerateUserFormat: lab-user
+  giteaUserNumber: 1
+  giteaUserPasswordLength: 16
+----
+
+Create a three users, `student1`, `student2` and `student3` with password `openshift`:
+
+[source,yaml]
+----
+apiVersion: gpte.opentlc.com/v1
+kind: Gitea
+metadata:
+  name: gitea-with-admin
+spec:
+  giteaSsl: true
+  giteaAdminUser: opentlc-mgr
+  giteaAdminPassword: ""
+  giteaAdminPasswordLength: 32
+  giteaAdminEmail: opentlc-mgr@redhat.com
+  giteaCreateUsers: true
+  giteaGenerateUserFormat: "student%d"
+  giteaUserNumber: 3
+  giteaUserPassword: openshift
+----
+
+=== Migrating repositories for created users
+
+If users are being created it is also possible to seed all users with repositories from another github (compatible) source. Every user will get the same repositories in their account. You can specify the source URL of the repository, the name of the migrated repository in Gitea and if the migrated repository should be a private repository or not.
+
+If the migration was successful the operator sets the field `.status.repoMigrationComplete: true`.
+
+Create 2 users `lab-user-1` and `lab-user-2` and migrate two repositories from GitHub to Gitea for each user:
+
+[source,yaml]
+----
+apiVersion: gpte.opentlc.com/v1
+kind: Gitea
+metadata:
+  name: gitea-with-admin
+spec:
+  giteaSsl: true
+  giteaAdminUser: opentlc-mgr
+  giteaAdminPassword: ""
+  giteaAdminPasswordLength: 32
+  giteaAdminEmail: opentlc-mgr@redhat.com
+  giteaCreateUsers: true
+  giteaGenerateUserFormat: "lab-user-%d"
+  giteaUserNumber: 2
+  giteaUserPassword: openshift
+  giteaMigrateRepositories: true
+  giteaRepositoriesList:
+  - repo: https://github.com/repository1.git
+    name: repository1
+    private: false
+  - repo: https://github.com/repository2.git
+    name: another-repository
+    private: true
 ----
 
 === Set up e-mail Service
@@ -157,11 +243,7 @@ Below is a list and description of all possible parameters that can be set for t
 [source,yaml]
 ----
 postgresqlSetup:
-  description: 'Set up a PostgreSQL database alongside the Gitea instance. Default is true.
-
-  If set to false the values for giteaPostgresqlServiceName, giteaPostgresqlDatabaseName, giteaPostgresqlUser and giteaPostgresqlPassword need to be specified to connect to an existing PostgreSQL database.
-
-  If set to true no values need to be specified for database name, database service, database user and database service.'
+  description: 'Set up a PostgreSQL database alongside the Gitea instance. Default is true. If set to false the values for giteaPostgresqlServiceName, giteaPostgresqlDatabaseName, giteaPostgresqlUser and giteaPostgresqlPassword need to be specified to connect to an existing PostgreSQL database. If set to true no values need to be specified for database name, database service, database user and database service.'
   type: boolean
 postgresqlServiceName:
   description: Name of the PostgreSQL database service. Default is 'postgresql-' followed by the name of the Gitea resource.
@@ -286,10 +368,48 @@ giteaAdminPassword:
   type: string
 giteaAdminPasswordLength:
   description: 'If a giteaAdminUser is provided but no giteaAdminPassowrd is provided a random ASCII password with the length specified will be created. Default: 16'
-  type: string
+  type: integer
 giteaAdminEmail:
   description: 'e-mail address for the Gitea Admin User. Default: "notset@notset.org"'
   type: string
+
+giteaCreateUsers:
+  description: 'Create users in Gitea. Only possible if an admin user is also being created. Default: false'
+  type: boolean
+giteaUserNumber:
+  description: 'Number of users to create in Gitea. If 1 then only one user will be created with the username from giteaGenerateUserFormat. If more than one then users will be created according to the format in giteaGenerateUserFormat. Default: 2'
+  type: integer
+giteaGenerateUserFormat:
+  description: 'Format for user names to be created. This will be taken literally if only one user is to be created (e.g. lab-user). If more than one user is to be created the format needs to include a "%d" to set the user number. Default: "user%d"'
+  type: string
+giteaUserPassword:
+  description: 'Password for all created Gitea users. If not specified or empty a random password will be created with length of giteaUserPasswordLength random ASCII characters. Default: ""'
+  type: string
+giteaUserPasswordLength:
+  description: 'If a giteaCreateUsers is set but no giteaUserPassowrd is provided a random ASCII password with the length specified will be created. Default: 16'
+  type: integer
+giteaUserEmailDomain:
+  description: 'e-mail domain for the created Gitea users. Default: "example.com"'
+  type: string
+
+giteaMigrateRepositories:
+  description: 'For created users migrate repositories from another location, e.g. GitHub. Default: false'
+  type: boolean
+giteaRepositoriesList:
+  description: 'List of repositories to be created. Each repository is an array of "repo: <source URL", "name: <name of migrated repository>" and "private: true | false". Default: []'
+  type: array
+  items:
+    type: object
+    properties:
+      repo:
+        description: 'Source repository URL to clone.'
+        type: string
+      name:
+        description: 'Name of the repository in Gitea.'
+        type: string
+      private:
+        description: 'Create private repository in Gitea.'
+        type: boolean
 
 giteaHttpPort:
   description: 'Port for Gitea to listen on. Default: 3000'

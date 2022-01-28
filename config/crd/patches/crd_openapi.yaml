@@ -38,11 +38,7 @@ spec:
             properties:
 
               postgresqlSetup:
-                description: 'Set up a PostgreSQL database alongside the Gitea instance. Default is true.
-
-                If set to false the values for giteaPostgresqlServiceName, giteaPostgresqlDatabaseName, giteaPostgresqlUser and giteaPostgresqlPassword need to be specified to connect to an existing PostgreSQL database.
-
-                If set to true no values need to be specified for database name, database service, database user and database service.'
+                description: 'Set up a PostgreSQL database alongside the Gitea instance. Default is true. If set to false the values for giteaPostgresqlServiceName, giteaPostgresqlDatabaseName, giteaPostgresqlUser and giteaPostgresqlPassword need to be specified to connect to an existing PostgreSQL database. If set to true no values need to be specified for database name, database service, database user and database service.'
                 type: boolean
               postgresqlServiceName:
                 description: Name of the PostgreSQL database service. Default is 'postgresql-' followed by the name of the Gitea resource.
@@ -152,11 +148,49 @@ spec:
                 description: 'Password for the Gitea admin user. If not specified or empty a random password will be created with length of giteaAdminPasswordLength random ASCII characters. Default: ""'
                 type: string
               giteaAdminPasswordLength:
-                description: 'If a giteaAdminUser is provided but no giteaAdminPassowrd is provided a random ASCII password with the length specified will be created. Default: 16'
-                type: string
+                description: 'If a giteaAdminUser is provided but no giteaAdminPassword is provided a random ASCII password with the length specified will be created. Default: 16'
+                type: integer
               giteaAdminEmail:
                 description: 'e-mail address for the Gitea Admin User. Default: "notset@notset.org"'
                 type: string
+
+              giteaCreateUsers:
+                description: 'Create users in Gitea. Only possible if an admin user is also being created. Default: false'
+                type: boolean
+              giteaUserNumber:
+                description: 'Number of users to create in Gitea. If 1 then only one user will be created with the username from giteaGenerateUserFormat. If more than one then users will be created according to the format in giteaGenerateUserFormat. Default: 2'
+                type: integer
+              giteaGenerateUserFormat:
+                description: 'Format for user names to be created. This will be taken literally if only one user is to be created (e.g. lab-user). If more than one user is to be created the format needs to include a "%d" to set the user number. Default: "user%d"'
+                type: string
+              giteaUserPassword:
+                description: 'Password for all created Gitea users. If not specified or empty a random password will be created with length of giteaUserPasswordLength random ASCII characters. Default: ""'
+                type: string
+              giteaUserPasswordLength:
+                description: 'If a giteaCreateUsers is set but no giteaUserPassowrd is provided a random ASCII password with the length specified will be created. Default: 16'
+                type: integer
+              giteaUserEmailDomain:
+                description: 'e-mail domain for the created Gitea users. Default: "example.com"'
+                type: string
+
+              giteaMigrateRepositories:
+                description: 'For created users migrate repositories from another location, e.g. GitHub. Default: false'
+                type: boolean
+              giteaRepositoriesList:
+                description: 'List of repositories to be created. Each repository is an array of "repo: <source URL", "name: <name of migrated repository>" and "private: true | false". Default: []'
+                type: array
+                items:
+                  type: object
+                  properties:
+                    repo:
+                      description: 'Source repository URL to clone.'
+                      type: string
+                    name:
+                      description: 'Name of the repository in Gitea.'
+                      type: string
+                    private:
+                      description: 'Create private repository in Gitea.'
+                      type: boolean
 
               giteaHttpPort:
                 description: 'Port for Gitea to listen on. Default: 3000'
