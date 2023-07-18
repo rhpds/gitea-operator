@@ -1,13 +1,20 @@
-# permissions for end users to edit giteas.
+# permissions for end users to edit gitea.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: gitea-editor-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: gitea-operator
+    app.kubernetes.io/part-of: gitea-operator
+    app.kubernetes.io/managed-by: kustomize
   name: gitea-editor-role
 rules:
 - apiGroups:
-  - gpte.opentlc.com
+  - pfe.rhpds.com
   resources:
-  - giteas
+  - gitea
   verbs:
   - create
   - delete
@@ -17,8 +24,8 @@ rules:
   - update
   - watch
 - apiGroups:
-  - gpte.opentlc.com
+  - pfe.rhpds.com
   resources:
-  - giteas/status
+  - gitea/status
   verbs:
   - get

@@ -14,3 +14,4 @@ patches:
     kind: ClusterServiceVersion
     name: gitea-operator.v0.0.0
     namespace: placeholder
+

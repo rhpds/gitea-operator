@@ -26,7 +26,6 @@ Role Variables
 |_postgresql_wait_for_init|true|No|Wait for the database pod to be running and ready
 |_postgresql_image|registry.redhat.io/rhscl/postgresql-96-rhel7|Yes|The image to use for PostgreSQL
 |_postgresql_image_tag|latest|Yes|The image tag to use for PostgreSQL
-|_postgresql_state|present|No|`present` to install, `absent` to remove
 |====
 
 Dependencies

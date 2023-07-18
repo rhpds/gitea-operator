@@ -12,6 +12,9 @@
 
 - hosts: localhost
   gather_facts: no
+  collections:
+  - kubernetes.core
+  - operator_sdk.util
   tasks:
   - name: Set up PostgreSQL
     when: postgresql_setup | default(true) | bool
@@ -27,6 +30,7 @@
       _postgresql_volume_storage_class: "{{ postgresql_volume_storage_class | default('') }}"
       _postgresql_image: "{{ postgresql_image | default('registry.redhat.io/rhel8/postgresql-12') }}"
       _postgresql_image_tag: "{{ postgresql_image_tag|default('latest') }}"
+      _postgresql_image_pull_policy: "{{ postgresql_image_pull_policy | default('IfNotPresent') }}"
       _postgresql_memory_request: "{{ postgresql_memory_request | default('512Mi') }}"
       _postgresql_memory_limit: "{{ postgresql_memory_limit | default('512Mi') }}"
       _postgresql_cpu_request: "{{ postgresql_cpu_request | default('200m') }}"
@@ -38,10 +42,9 @@
     vars:
       _gitea_namespace: "{{ ansible_operator_meta.namespace }}"
       _gitea_name: "{{ gitea_service_name | default( ansible_operator_meta.name ) }}"
-      _gitea_ssl: "{{ gitea_ssl | default(false) | bool }}"
-      _gitea_route: "{{ gitea_route | default('') }}"
-      _gitea_image: "{{ gitea_image | default('quay.io/gpte-devops-automation/gitea') }}"
+      _gitea_image: "{{ gitea_image | default('quay.io/rhpds/gitea') }}"
       _gitea_image_tag: "{{ gitea_image_tag | default('latest') }}"
+      _gitea_image_pull_policy: "{{ gitea_image_pull_policy | default('IfNotPresent') }}"
       _gitea_volume_size: "{{ gitea_volume_size | default('4Gi') }}"
       _gitea_volume_storage_class: "{{ gitea_volume_storage_class | default('') }}"
       _gitea_memory_request: "{{ gitea_memory_request | default('1Gi') }}"
@@ -49,22 +52,30 @@
       _gitea_cpu_request: "{{ gitea_cpu_request | default('200m') }}"
       _gitea_cpu_limit: "{{ gitea_cpu_limit | default('500m') }}"
 
+      _gitea_config_map_name: "{{ gitea_config_map_name | default('') }}"
+      _gitea_ssl: "{{ gitea_ssl | default(false) | bool }}"
+      _gitea_hostname: "{{ gitea_hostname | default('') }}"
+
       _gitea_postgresql_service_name: "{{ gitea_postgresql_service_name | default('postgresql-'+ansible_operator_meta.name) }}"
       _gitea_postgresql_database_name: "{{ gitea_postgresql_database_name | default('giteadb') }}"
       _gitea_postgresql_user: "{{ gitea_postgresql_user | default('giteauser') }}"
       _gitea_postgresql_password: "{{ gitea_postgresql_password | default('giteapassword') }}"
 
       _gitea_admin_user: "{{ gitea_admin_user | default('') }}"
+      _gitea_admin_email: "{{ gitea_admin_email | default('notset@notset.org') }}"
+      _gitea_admin_password_secret_name: "{{ gitea_admin_password_secret_name | default('') }}"
       _gitea_admin_password: "{{ gitea_admin_password | default('') }}"
       _gitea_admin_password_length: "{{ gitea_admin_password_length | default(16) }}"
-      _gitea_admin_email: "{{ gitea_admin_email | default('notset@notset.org') }}"
+      _gitea_admin_password_expose: "{{ gitea_admin_password_expose | default(true) }}"
 
       _gitea_create_users: "{{ gitea_create_users | default(false) }}"
       _gitea_user_number: "{{ gitea_user_number | default(2) }}"
       _gitea_generate_user_format: "{{ gitea_generate_user_format | default('user%d') }}"
       _gitea_user_email_domain: "{{ gitea_user_email_domain | default('example.com') }}"
+      _gitea_user_password_secret_name: "{{ gitea_user_password_secret_name | default('') }}"
       _gitea_user_password: "{{ gitea_user_password | default('') }}"
       _gitea_user_password_length: "{{ gitea_user_password_length | default(16) }}"
+      _gitea_user_password_expose: "{{ gitea_user_password_expose | default(true) }}"
 
       _gitea_migrate_repositories: "{{ gitea_migrate_repositories | default(false) }}"
       _gitea_repositories_list: "{{ gitea_repositories_list | default([]) }}"
@@ -77,6 +88,8 @@
       _gitea_enable_captcha: "{{ gitea_enable_captcha | default(false) | bool }}"
       _gitea_allow_create_organization: "{{ gitea_allow_create_organization | default(true) | bool }}"
       _gitea_allow_local_network_migration: "{{ gitea_allow_local_network_migration | default(false) | bool }}"
+      _gitea_webhook_allowed_host_list: "{{ gitea_webhook_allowed_host_list | default('external,private') }}"
+      _gitea_webhook_skip_tls_verify: "{{ gitea_webhook_skip_tls_verify | default(false) }}"
 
       _gitea_mailer_enabled: "{{ gitea_mailer_enabled | default(false) | bool }}"
       _gitea_mailer_from: "{{ gitea_mailer_from | default('') }}"

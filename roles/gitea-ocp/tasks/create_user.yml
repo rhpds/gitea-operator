@@ -1,16 +1,16 @@
 ---
 - name: Set the username as a fact for easy reuse (single user)
   when: _gitea_user_number | int == 1
-  set_fact:
+  ansible.builtin.set_fact:
     _gitea_user_name: "{{ _gitea_generate_user_format }}"
 
 - name: Set the username as a fact for easy reuse (multiple users)
   when: _gitea_user_number | int > 1
-  set_fact:
+  ansible.builtin.set_fact:
     _gitea_user_name: "{{ _gitea_generate_user_format | format( item ) }}"
 
 - name: Check if user exists
-  uri:
+  ansible.builtin.uri:
     url: "{{ _gitea_actual_route_url }}/api/v1/users/{{ _gitea_user_name }}"
     method: GET
     validate_certs: false
@@ -22,7 +22,7 @@
 
 - name: Create the user
   when: r_gitea_insystem_user.status == 404
-  uri:
+  ansible.builtin.uri:
     url: "{{ _gitea_actual_route_url }}/api/v1/admin/users"
     method: POST
     body: "{{ body }}"

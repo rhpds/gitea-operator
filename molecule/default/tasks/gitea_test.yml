@@ -1,5 +1,5 @@
 ---
-- name: Create the gpte.opentlc.com/v1.Gitea
+- name: Create the pfe.rhpds.com/v1.Gitea
   k8s:
     state: present
     namespace: '{{ namespace }}'
@@ -7,11 +7,10 @@
     wait: yes
     wait_timeout: 300
     wait_condition:
-      type: Running
-      reason: Successful
+      type: Successful
       status: "True"
   vars:
-    cr_file: 'gpte_v1_gitea.yaml'
+    cr_file: 'pfe_v1_gitea.yaml'
 
 - name: Add assertions here
   assert:

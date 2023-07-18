@@ -5,16 +5,16 @@
 # item[1]['private'] is a boolean flag to make the repo private
 - name: Set the username as a fact for easy reuse (single user)
   when: _gitea_user_number | int == 1
-  set_fact:
+  ansible.builtin.set_fact:
     _gitea_user_name: "{{ _gitea_generate_user_format }}"
 
 - name: Set the username as a fact for easy reuse (multiple users)
   when: _gitea_user_number | int > 1
-  set_fact:
+  ansible.builtin.set_fact:
     _gitea_user_name: "{{ _gitea_generate_user_format | format(item[0]) }}"
 
 - name: Check if the repository exists
-  uri:
+  ansible.builtin.uri:
     url: "{{ _gitea_actual_route_url }}/api/v1/repos/{{ _gitea_user_name }}/{{ item[1]['name'] }}"
     method: GET
     validate_certs: false
@@ -27,7 +27,7 @@
 
 - name: Get the Gitea user info to obtain the uid
   when: r_gitea_repo_exists.status == 404
-  uri:
+  ansible.builtin.uri:
     url: "{{ _gitea_actual_route_url }}/api/v1/users/{{ _gitea_user_name }}"
     method: GET
     validate_certs: false
@@ -38,7 +38,7 @@
 
 - name: Create the specified repository for the user
   when: r_gitea_repo_exists.status == 404
-  uri:
+  ansible.builtin.uri:
     url: "{{ _gitea_actual_route_url }}/api/v1/repos/migrate"
     method: POST
     body: "{{ body }}"

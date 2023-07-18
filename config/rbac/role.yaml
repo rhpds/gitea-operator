@@ -38,14 +38,14 @@ rules:
       - update
       - watch
   ##
-  ## Rules for gpte.opentlc.com/v1, Kind: Gitea
+  ## Rules for pfe.rhpds.com/v1, Kind: Gitea
   ##
   - apiGroups:
-      - gpte.opentlc.com
+      - pfe.rhpds.com
     resources:
-      - giteas
-      - giteas/status
-      - giteas/finalizers
+      - gitea
+      - gitea/status
+      - gitea/finalizers
     verbs:
       - create
       - delete

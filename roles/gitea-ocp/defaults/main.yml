@@ -1,10 +1,17 @@
 ---
-# defaults file for gitea-ocp
-_gitea_state: present
 _gitea_namespace: gitea
 _gitea_name: gitea
 
-_gitea_ssl: False
+# It is possible to specify a ConfigMap that already exists for Gitea configuration
+# The ConfigMap has to have a file `app.ini` in it with the entire Gitea configuration
+# This way it is possible to set values that have not been exposed via the operator CR
+# If the ConfigMap name is empty (default) the ConfigMap will be generated via the custom
+# resource variables specified
+# If the ConfigMap is provided then _gitea_hostname and _gitea_ssl also must be passed
+# in order for the app.ini to match the route
+_gitea_config_map_name: ""
+
+_gitea_ssl: false
 _gitea_port: 3000
 _gitea_postgresql_database_name: postgresql
 _gitea_postgresql_port: 5432
@@ -17,16 +24,24 @@ _gitea_memory_request: 1Gi
 _gitea_memory_limit: 1Gi
 _gitea_cpu_request: 200m
 _gitea_cpu_limit: 500m
-_gitea_image: quay.io/gpte-devops-automation/gitea
+_gitea_image: quay.io/rhpds/gitea
 _gitea_image_tag: latest
 
 # If Admin user is specified the Admin User will
-# be created. If not, or empty no admin user will be created
+# be created. If no admin user is specified, or empty no admin user will be created
+# Password can be set directly via the CR or from a secret that must
+# exist in the namespace with key `adminPassword`.
 # If no password is specified a password with specified length will be created
+# If a secret name is specified that takes precedence over the variable _gitea_admin_password
 _gitea_admin_user: opentlc-mgr
+_gitea_admin_email: "opentlc-mgr@open.redhat.com"
+_gitea_admin_password_secret_name: ""
 _gitea_admin_password: ""
 _gitea_admin_password_length: 16
-_gitea_admin_email: "opentlc-mgr@open.redhat.com"
+# Write actual user password into the CR status field
+# Maybe good idea to set to false when setting password from
+# a secret. Default stays true for compatibility reaons
+_gitea_admin_password_expose: true
 
 # Create users in Gitea. If set to true an Admin user *must* be created.
 _gitea_create_users: false
@@ -36,9 +51,17 @@ _gitea_create_users: false
 _gitea_user_number: 2
 _gitea_generate_user_format: "user%d"
 _gitea_user_email_domain: example.com
+# Password can be set directly via the CR or from a secret that must
+# exist in the namespace with key `userPassword`.
 # If no password is specified a password with specified length will be created
-_gitea_user_password: openshift
+# If a secret name is specified that takes precedence over the variable _gitea_user_password
+_gitea_user_password_secret_name: ""
+_gitea_user_password: ""
 _gitea_user_password_length: 16
+# Write actual user password into the CR status field
+# Maybe good idea to set to false when setting password from
+# a secret. Default stays true for compatibility reaons
+_gitea_user_password_expose: true
 
 # Set up repositories for all created users - also handled
 # by the workload, not the operator
@@ -61,6 +84,11 @@ _gitea_enable_captcha: false
 _gitea_allow_create_organization: true
 _gitea_allow_local_network_migration: false
 
+# Which targets a webhook is allowed to call
+# See https://docs.gitea.com/next/administration/config-cheat-sheet#webhook-webhook
+_gitea_webhook_allowed_host_list: "external,private"
+_gitea_webhook_skip_tls_verify: false
+
 # Gitea e-mail Setup
 _gitea_mailer_enabled: false
 _gitea_mailer_from: gitea@mydomain.com
@@ -74,11 +102,15 @@ _gitea_mailer_helo_hostname: ""
 _gitea_register_email_confirm: false
 _gitea_enable_notify_mail: false
 
-# Set to a valid route for the cluster to make a nicer route than svc-project.apps. Leave empty for default route
-_gitea_route: ""
+# Set to a valid hostname for the cluster to make a nicer route than svc-project.apps. Leave empty for default route
+# Must be specified if a configmap name is provided (because the app.ini can not be generated in that case)
+_gitea_hostname: ""
 
 # Internal variables. Do not change
 # ---------------------------------
+# Actual name of the ConfigMap holding app.ini
+_gitea_actual_configmap_name: ""
+
 # Actual Gitea route
 _gitea_actual_route_url: ""
 _gitea_actual_route_hostname: ""

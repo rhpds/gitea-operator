@@ -1,9 +1,11 @@
-apiVersion: gpte.opentlc.com/v1
+---
+apiVersion: pfe.rhpds.com/v1
 kind: Gitea
 metadata:
   name: repository
 spec:
+  giteaImageTag: 1.20.0
+  giteaImagePullPolicy: Always
   postgresqlVolumeSize: 4Gi
-  giteaImageTag: latest
   giteaVolumeSize: 4Gi
   giteaSsl: True

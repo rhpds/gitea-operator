@@ -1,3 +1,4 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,7 +20,7 @@ spec:
       containers:
       - name: gitea
         image: "{{ _gitea_image }}:{{ _gitea_image_tag }}"
-        imagePullPolicy: Always
+        imagePullPolicy: "{{ _gitea_image_pull_policy }}"
         ports:
         - containerPort: 3000
           protocol: TCP
@@ -54,14 +55,18 @@ spec:
         - name: gitea-repositories
           mountPath: /gitea-repositories
         - name: gitea-config
-          mountPath: /home/gitea/conf
+          mountPath: /home/gitea/conf-import
       volumes:
       - name: gitea-repositories
         persistentVolumeClaim:
           claimName: "{{ _gitea_name }}-pvc"
       - name: gitea-config
         configMap:
+{% if _gitea_config_map_name | default('') | length > 0 %}
+          name: "{{ _gitea_config_map_name }}"
+{% else %}
           name: "{{ _gitea_name }}-config"
+{% endif %}
           items:
-            - key: app.ini
-              path: app.ini
+          - key: app.ini
+            path: app.ini

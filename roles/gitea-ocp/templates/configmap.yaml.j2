@@ -1,3 +1,4 @@
+---
 kind: ConfigMap
 apiVersion: v1
 metadata:
@@ -54,7 +55,7 @@ data:
     IS_TLS_ENABLED = {{ _gitea_mailer_tls | bool }}
     USER           = {{ _gitea_mailer_user }}
     PASSWD         = `{{ _gitea_mailer_password }}`
-    {%    if _gitea_mailer_helo_hostname | length > 0 %}
+    {%    if _gitea_mailer_helo_hostname | default("") | length > 0 %}
     HELO_HOSTNAME  = {{ _gitea_mailer_helo_hostname }}
     {%    endif %}
     {% endif %}
@@ -78,6 +79,10 @@ data:
     ENABLE_OPENID_SIGNIN = false
     ENABLE_OPENID_SIGNUP = false
 
+    [webhook]
+    ALLOWED_HOST_LIST = {{ _gitea_webhook_allowed_host_list }}
+    SKIP_TLS_VERIFY = {{ _gitea_webhook_skip_tls_verify | bool }}
+
     [session]
     PROVIDER = file
 
@@ -89,5 +94,5 @@ data:
     [markup.asciidoc]
     ENABLED = true
     FILE_EXTENSIONS = .adoc,.asciidoc
-    RENDER_COMMAND = "asciidoc --out-file=- -"
+    RENDER_COMMAND = "asciidoc --backend=xhtml11 --no-header-footer --attribute source-highlighter=source-highlight --out-file=- -"
     IS_INPUT_FILE = false

@@ -26,7 +26,6 @@ This role also requires a PostgreSQL Database to be running in the same OpenShif
 |_gitea_wait_for_init|true|No|Wait for the database pod to be running and ready
 |_gitea_image|docker.io/wkulhanek/gitea|Yes|Container image for Gitea
 |_gitea_image_tag|latest|Yes|Tag for Gitea container image
-|_gitea_state|present|No|`present` to install, `absent` to remove
 |====
 
 == Dependencies

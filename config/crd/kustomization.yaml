@@ -2,13 +2,12 @@
 # since it depends on service name and namespace that are out of this kustomize package.
 # It should be run by config/default
 resources:
-- bases/gpte.opentlc.com_giteas.yaml
+- bases/pfe.rhpds.com_gitea.yaml
 #+kubebuilder:scaffold:crdkustomizeresource
-
 patches:
 - path: ./patches/crd_openapi.yaml
   target:
     group: apiextensions.k8s.io
     version: v1
     kind: CustomResourceDefinition
-    name: giteas.gpte.opentlc.com
+    name: gitea.pfe.rhpds.com

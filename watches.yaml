@@ -1,7 +1,7 @@
 ---
 # Use the 'create api' subcommand to add watches to this file.
 - version: v1
-  group: gpte.opentlc.com
+  group: pfe.rhpds.com
   kind: Gitea
   playbook: playbooks/gitea.yml
 #+kubebuilder:scaffold:watch

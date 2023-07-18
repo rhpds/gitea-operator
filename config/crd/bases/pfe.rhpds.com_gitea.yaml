@@ -2,13 +2,13 @@
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  name: giteas.gpte.opentlc.com
+  name: gitea.pfe.rhpds.com
 spec:
-  group: gpte.opentlc.com
+  group: pfe.rhpds.com
   names:
     kind: Gitea
     listKind: GiteaList
-    plural: giteas
+    plural: gitea
     singular: gitea
   scope: Namespaced
   versions:

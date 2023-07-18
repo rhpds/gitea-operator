@@ -1,6 +1,4 @@
 ---
-# defaults file for postgresql-ocp
-_postgresql_state: present
 _postgresql_namespace: postgresql
 _postgresql_name: postgresql
 

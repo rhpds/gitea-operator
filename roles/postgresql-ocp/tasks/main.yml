@@ -1,23 +1,16 @@
 ---
-# tasks file for postgresql-ocp
-
-- name: Set OpenShift Objects for Postgresql to {{ _postgresql_state }}
+- name: Create OpenShift objects for PostgreSQL
   kubernetes.core.k8s:
-    state: "{{ _postgresql_state }}"
-    merge_type:
-    - strategic-merge
-    - merge
+    state: present
     definition: "{{ lookup('template', item ) | from_yaml }}"
   loop:
   - secret.yaml.j2
   - service.yaml.j2
-  - persistent_volume_claim.yaml.j2
+  - persistentvolumeclaim.yaml.j2
   - deployment.yaml.j2
 
 - name: Wait until application is available
-  when:
-    - _postgresql_state == "present"
-    - _postgresql_wait_for_init|bool
+  when: _postgresql_wait_for_init|bool
   kubernetes.core.k8s_info:
     api_version: apps/v1
     kind: Deployment

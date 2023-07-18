@@ -1,3 +1,4 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -33,7 +34,7 @@ spec:
               key: database-name
               name: "{{ _postgresql_name }}"
         image: "{{ _postgresql_image }}:{{ _postgresql_image_tag }}"
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: "{{ _postgresql_image_pull_policy }}"
         livenessProbe:
           exec:
             command:

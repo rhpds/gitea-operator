@@ -1,25 +1,26 @@
 = Gitea Operator
 
-This repository holds the source code for the Red Hat GPTE Gitea Operator. It can be recreated by following the steps in https://github.com/redhat-cop/openshift-lab-origin/blob/master/OpenShift4/Ansible_Operator_1.1.adoc.
+This repository holds the source code for the Red Hat Porfolio Marketing Gitea Operator.
+The operator can be recreated by following the steps in https://github.com/redhat-cop/openshift-lab-origin/blob/master/OpenShift4/Building_Ansible_Operator_for_Gitea.adoc.
 
 == Installing the Operator
 
 . Install the CatalogSource into your cluster:
 +
-[source,sh]
+[source]
 ----
-oc apply -f https://raw.githubusercontent.com/redhat-gpte-devopsautomation/gitea-operator/master/catalog_source.yaml
+oc apply -f https://raw.githubusercontent.com/rhpds/gitea-operator/master/catalog_source.yaml
 ----
 
 . Log into your Cluster's Web Console using an account with `cluster-admin` privileges.
 . From the *OperatorHub* find the *Gitea Operator* and install it.
 . This installs the operator cluster wide - which means you (or your users) can greate instances of `Gitea` in any project on the cluster. See below for examples of how to create Giteas.
 
-== Creating Gitea Instances
+== Creating Gitea instances
 
-. Create a new Project for your Gitea Instance:
+. Create a new project for your Gitea instance:
 +
-[source,sh]
+[source]
 ----
 oc new-project gitea
 ----
@@ -32,14 +33,14 @@ The Gitea Operator can set up a PostgreSQL database alongside the Gitea Pod. Thi
 
 To deploy a simple Gitea instance:
 
-[source,yaml]
+[source]
 ----
-apiVersion: gpte.opentlc.com/v1
+apiVersion: pfe.rhpds.com/v1
 kind: Gitea
 metadata:
   name: simple-gitea
 spec:
-  giteaImageTag: 1.15.10
+  giteaImageTag: 1.20.0
   giteaVolumeSize: 4Gi
   giteaSsl: true
   postgresqlVolumeSize: 4Gi
@@ -49,9 +50,9 @@ Note that you can specify specific properties for `postgresqlServiceName`, `post
 
 To deploy a simple Gitea instance using OpenShift Container Storage (if the storage class `ocs-storagecluster-ceph-rbd` is not the default storage class):
 
-[source,yaml]
+[source]
 ----
-apiVersion: gpte.opentlc.com/v1
+apiVersion: pfe.rhpds.com/v1
 kind: Gitea
 metadata:
   name: simple-gitea-ocs
@@ -72,19 +73,46 @@ If an Admin user has been created then you can set the variable `giteaDisableReg
 
 The operator will report the status of the admin user creation as well as the user password in the fields `.status.adminSetupComplete: true` and `.status.adminPassword`.
 
-[source,yaml]
+[source]
 ----
-apiVersion: gpte.opentlc.com/v1
+apiVersion: pfe.rhpds.com/v1
 kind: Gitea
 metadata:
   name: gitea-with-admin
 spec:
   giteaSsl: true
   giteaAdminUser: opentlc-mgr
+  giteaAdminEmail: opentlc-mgr@redhat.com
   giteaAdminPassword: ""
   giteaAdminPasswordLength: 32
-  giteaAdminEmail: opentlc-mgr@redhat.com
 ----
+
+=== Create Admin user with password from secret
+
+The operator can use a password from the admin user that has been pre-created in a secret. The secret *must* be in the same namespace as the gitea instance - and the key for the admin password *must* be `adminPassword`.
+
+Create a secret with the password:
+[source]
+----
+oc create secret generic gitea-admin-password --from-literal=adminPassword=myPassw0rd
+----
+
+Tell the operator to use the password from the secret:
+
+[source]
+----
+apiVersion: pfe.rhpds.com/v1
+kind: Gitea
+metadata:
+  name: gitea-with-admin
+spec:
+  giteaSsl: true
+  giteaAdminUser: opentlc-mgr
+  giteaAdminEmail: opentlc-mgr@redhat.com
+  giteaAdminPasswordSecretName: gitea-admin-password
+----
+
+It may be useful to hide the admin password from the `status` section of the Gitea custom resource. In that case set the variable `giteaAdminPasswordExpose: false`. For compatibility reasons the default for that variable is `true` which means that whatever password has been set for the admin user will be visible in `status.adminPassword`.
 
 === Create regular users
 
@@ -100,9 +128,9 @@ The operator will report the status of the user creation as well as the user pas
 
 Create a single user, `lab-user` with a generated password of length 16:
 
-[source,yaml]
+[source]
 ----
-apiVersion: gpte.opentlc.com/v1
+apiVersion: pfe.rhpds.com/v1
 kind: Gitea
 metadata:
   name: gitea-with-admin
@@ -120,23 +148,59 @@ spec:
 
 Create a three users, `student1`, `student2` and `student3` with password `openshift`:
 
-[source,yaml]
+[source]
 ----
-apiVersion: gpte.opentlc.com/v1
+apiVersion: pfe.rhpds.com/v1
 kind: Gitea
 metadata:
-  name: gitea-with-admin
+  name: gitea-with-users
 spec:
   giteaSsl: true
+
   giteaAdminUser: opentlc-mgr
   giteaAdminPassword: ""
   giteaAdminPasswordLength: 32
   giteaAdminEmail: opentlc-mgr@redhat.com
+
   giteaCreateUsers: true
   giteaGenerateUserFormat: "student%d"
   giteaUserNumber: 3
   giteaUserPassword: openshift
 ----
+
+=== Create users with password from secret
+
+The operator can use a password for the created users that has been pre-created in a secret. The secret *must* be in the same namespace as the gitea instance - and the key for the user password *must* be `userPassword`.
+
+Create a secret with the password:
+[source]
+----
+oc create secret generic gitea-user-password --from-literal=userPassword=myPassw0rd
+----
+
+Tell the operator to use the password from the secret (this example also generates a new 16 character password for the admin user):
+
+[source]
+----
+apiVersion: pfe.rhpds.com/v1
+kind: Gitea
+metadata:
+  name: gitea-with-users
+spec:
+  giteaSsl: true
+
+  giteaAdminUser: opentlc-mgr
+  giteaAdminEmail: opentlc-mgr@redhat.com
+  giteaAdminPassword: ""
+  giteaAdminPasswordLength: 16
+
+  giteaCreateUsers: true
+  giteaGenerateUserFormat: "student%d"
+  giteaUserNumber: 3
+  giteaUserPasswordSecretName: gitea-user-password
+----
+
+It may be useful to hide the user password from the `status` section of the Gitea custom resource. In that case set the variable `giteaUserPasswordExpose: false`. For compatibility reasons the default for that variable is `true` which means that whatever password has been set for the users will be visible in `status.userPassword`.
 
 === Migrating repositories for created users
 
@@ -146,22 +210,25 @@ If the migration was successful the operator sets the field `.status.repoMigrati
 
 Create 2 users `lab-user-1` and `lab-user-2` and migrate two repositories from GitHub to Gitea for each user:
 
-[source,yaml]
+[source]
 ----
-apiVersion: gpte.opentlc.com/v1
+apiVersion: pfe.rhpds.com/v1
 kind: Gitea
 metadata:
-  name: gitea-with-admin
+  name: gitea-with-repositories
 spec:
   giteaSsl: true
+
   giteaAdminUser: opentlc-mgr
   giteaAdminPassword: ""
   giteaAdminPasswordLength: 32
   giteaAdminEmail: opentlc-mgr@redhat.com
+
   giteaCreateUsers: true
   giteaGenerateUserFormat: "lab-user-%d"
   giteaUserNumber: 2
   giteaUserPassword: openshift
+
   giteaMigrateRepositories: true
   giteaRepositoriesList:
   - repo: https://github.com/repository1.git
@@ -174,16 +241,16 @@ spec:
 
 === Set up e-mail Service
 
-See https://docs.gitea.io/en-us/email-setup/ for more information on how to set up e-mail services with Gitea.
+See https://docs.gitea.io/en-us/email-setup for more information on how to set up e-mail services with Gitea.
 
 . Set the variable `giteaMailerEnabled: true`. If this is set to true then the other `giteaMailer*` variables need to be set as well. If the e-mail account you are using uses two-factor authentication (for example GMail) you may need to create an app-specific password to be used.
 +
 Once e-mail is enabled you can use the variables `giteaRegisterEmailConfirm` and `giteaEnableNotifyMail` to turn on e-mail verification and notification.
 +
 .Example for GMail
-[source,yaml]
+[source]
 ----
-apiVersion: gpte.opentlc.com/v1
+apiVersion: pfe.rhpds.com/v1
 kind: Gitea
 metadata:
   name: gitea-with-email
@@ -206,11 +273,11 @@ If you want to manage your PostgreSQL database separately from the Gitea pod the
 
 . Create a PostgreSQL database from the OpenShift template:
 +
-[source,sh]
+[source]
 ----
-oc new-app postgresql-persistent \ 
+oc new-app postgresql-persistent \
    --param DATABASE_SERVICE_NAME=postgresql-gitea \
-   --param POSTGRESQL_USER=gitea_post \
+   --param POSTGRESQL_USER=gitea_user \
    --param POSTGRESQL_PASSWORD=gitea_pass \
    --param POSTGRESQL_DATABASE=gitea \
    --param VOLUME_CAPACITY=10Gi
@@ -221,9 +288,9 @@ You can not specify a storage class when using the OpenShift template. If you ne
 
 . Create a Gitea instance. When using a self-managed database you must set `postgresqlSetup: false` and specify connection information to the database.
 
-[source,yaml]
+[source]
 ----
-apiVersion: gpte.opentlc.com/v1
+apiVersion: pfe.rhpds.com/v1
 kind: Gitea
 metadata:
   name: gitea-unmanaged-db
@@ -231,16 +298,95 @@ spec:
   postgresqlSetup: false
   giteaPostgresqlServiceName: postgresql-gitea
   giteaPostgresqlDatabaseName: gitea
-  giteaPostgresqlUser: gitea_post
+  giteaPostgresqlUser: gitea_user
   giteaPostgresqlPassword: gitea_pass
   giteaVolumeSize: 10Gi
 ----
+
+=== Provide app.ini in ConfigMap
+
+A rather advanced use case is to create the `app.ini` configuration for Gitea yourself rather than having the operator create it.
+
+Usually the operator generates the `app.ini` configuration file based on the content of the variables in the Gitea custom resource. However not every single configuration option for Gitea is exposed as Gitea variables. Maybe because they are rather uncommon or because they only got added to a Gitea version that got released after the operator was built.
+
+One use case could be enabling `ssh` cloning capability for the Gitea repository.
+
+Another use case could be setting up OAuth2 authorization for the repository.
+
+The suggested approach is this:
+
+* Set up a Gitea instance with all variables that are available.
+* Wait until the Gitea instance is running
+* Extract (save) the ConfigMap that has been created (usually in `<gitea-name>-config`)
++
+[source]
+----
+oc get configmap gitea-config -n gitea -o yaml >$HOME/configmap.yaml
+----
+
+* Edit the file `app.ini` in the configmap as desired (the file name always *must* be `app.ini`).
+* Delete the Gitea config.
+
+Now you can re-create the configuration from scratch. You can have the Gitea operator create the PostgreSQL database - but of course you must specify a user name and password for the PostgreSQL database that matches what you will provide in your `app.ini` config map.
+
+. Create the project
+. Determine what the `hostname` of your Gitea installation will be. This hostname *must* match in the configmap's `app.ini` file and in the parameter `giteaHostname` (which *must* be provided in case an external configmap is provided)
+. Create the ConfigMap (from file or otherwise) making sure the URLs match the desired hostname and the database connectivity matches your PostgreSQL database (either pre-setup of setup by the operator)
++
+.Example
+[source]
+----
+[...]
+    [database]
+    DB_TYPE  = postgres
+    HOST     = postgresql-gitea:5432
+    NAME     = giteadb
+    USER     = gitea_user
+    PASSWD   = gitea_pass
+    SSL_MODE = disable
+
+[...]
+
+    [server]
+    ROOT_URL         = https://gitea-gitea.apps.cluster-hyper.hyper.dev.redhatworkshops.io
+    SSH_DOMAIN       = gitea-gitea.apps.cluster-hyper.hyper.dev.redhatworkshops.io
+    DOMAIN           = gitea-gitea.apps.cluster-hyper.hyper.dev.redhatworkshops.io
+
+[...]
+----
+. Create Gitea making sure the `giteaHostname` is part of the `spec`.
+
+.Example
+[source]
+====
+---
+apiVersion: pfe.rhpds.com/v1
+kind: Gitea
+metadata:
+  name: gitea-ext-config
+spec:
+  postgresqlSetup: true
+  giteaPostgresqlServiceName: postgresql-gitea
+  giteaPostgresqlDatabaseName: giteadb
+  giteaPostgresqlUser: gitea_user
+  giteaPostgresqlPassword: gitea_pass
+
+  giteaImageTag: 1.20.0
+  giteaVolumeSize: 4Gi
+  giteaAdminUser: wkadmin
+  giteaAdminPassword: ""
+  giteaAdminUserPasswordLength: 16
+
+  giteaConfigMapName: custom-gitea-config
+  giteaSsl: true
+  giteaHostname: gitea.apps.cluster-hyper.hyper.dev.redhatworkshops.io
+====
 
 == API Reference:
 
 Below is a list and description of all possible parameters that can be set for the `Gitea` custom resource.
 
-[source,yaml]
+[source]
 ----
 postgresqlSetup:
   description: 'Set up a PostgreSQL database alongside the Gitea instance. Default is true. If set to false the values for giteaPostgresqlServiceName, giteaPostgresqlDatabaseName, giteaPostgresqlUser and giteaPostgresqlPassword need to be specified to connect to an existing PostgreSQL database. If set to true no values need to be specified for database name, database service, database user and database service.'
@@ -271,6 +417,9 @@ postgresqlImage:
   type: string
 postgresqlImageTag:
   description: Image tag for the PostgreSQL container image. Default is 'latest'.
+  type: string
+postgresqlImagePullPolicy:
+  description: Pull policy for the PostgreSQL container image. Default is 'IfNotPresent'.
   type: string
 
 postgresqlMemoryRequest:
@@ -304,8 +453,8 @@ giteaServiceName:
 giteaSsl:
   description: Create an HTTPS terminated route for Gitea. Default is 'false'
   type: boolean
-giteaRoute:
-  description: Specify the whole Route URL for the Gitea Route. Default is ''. Make sure the route is reachable from outside the cluster.
+giteaHostname:
+  description: Specify the hostname for the Gitea Route. Default is ''. Make sure the route is reachable from outside the cluster.
   type: string
 
 giteaVolumeSize:
@@ -316,10 +465,13 @@ giteaVolumeStorageClass:
   type: string
 
 giteaImage:
-  description: Container image for Gitea. Default is 'quay.io/gpte-devops-automation/gitea'.
+  description: Container image for Gitea. Default is 'quay.io/rhpds/gitea'.
   type: string
 giteaImageTag:
   description: Image tag for the Gitea container image. Default is 'latest'.
+  type: string
+giteaImagePullPolicy:
+  description: Pull policy for the Gitea container image. Default is 'IfNotPresent'.
   type: string
 
 giteaMemoryRequest:
@@ -360,6 +512,10 @@ giteaPostgresqlPassword:
   description: 'PostgreSQL password. Only required when PostgreSQL is not set up by the operator. Default: giteapassword'
   type: string
 
+giteaConfigMapName:
+  description: Name of a config map in the same namespace as the Gitea custom resource. The config map must contain one file called app.ini to configure Gitea. If this variable is set then giteaHostname must also be set. giteaSsl should be set but will default to false.
+  type: string
+
 giteaAdminUser:
   description: 'User ID for the Admin User to be created. If not specified no admin user will be created. Note that if giteaDisableRegistration is set to false and no admin user will be created you will not be able to create any users for Gitea. Default: ""'
   type: string
@@ -369,6 +525,12 @@ giteaAdminPassword:
 giteaAdminPasswordLength:
   description: 'If a giteaAdminUser is provided but no giteaAdminPassowrd is provided a random ASCII password with the length specified will be created. Default: 16'
   type: integer
+giteaAdminPasswordSecretName:
+  description: Name of a secret containing the Gitea admin user's password in secret key adminPassword. If this variable is set it takes precedence over all other ways to specify/generate an admin password.
+  type: string
+giteaAdminPasswordExpose:
+  description: Expose the final Gitea admin password in the custom resource status section. Default is true for compatibility. Set to false to not show the password in the status section.
+  type: boolean
 giteaAdminEmail:
   description: 'e-mail address for the Gitea Admin User. Default: "notset@notset.org"'
   type: string
@@ -391,6 +553,12 @@ giteaUserPasswordLength:
 giteaUserEmailDomain:
   description: 'e-mail domain for the created Gitea users. Default: "example.com"'
   type: string
+giteaUserPasswordSecretName:
+  description: Name of a secret containing the Gitea user common password in secret key userPassword. If this variable is set it takes precedence over all other ways to specify/generate a user password.
+  type: string
+giteaUserPasswordExpose:
+  description: Expose the common Gitea user password in the custom resource status section. Default is true for compatibility. Set to false to not show the password in the status section.
+  type: boolean
 
 giteaMigrateRepositories:
   description: 'For created users migrate repositories from another location, e.g. GitHub. Default: false'
@@ -434,6 +602,13 @@ giteaAllowCreateOrganization:
   type: boolean
 giteaAllowLocalNetworkMigration:
   description: 'Allow migration of repositories hosted on local network IPs as defined by RFC 1918, RFC 1122, RFC 4632 and RFC 4291. Default: false'
+  type: boolean
+
+giteaWebhookAllowedHostList:
+  description: List of hosts that a web hook is allowed to call. See https://docs.gitea.com/next/administration/config-cheat-sheet#webhook-webhook for more details. Default is 'external,private'.
+  type: string
+giteaWebhookSkipTlsVerify:
+  description: Set to 'true' to skip validation of the webhook target URL certificate. Default is false.
   type: boolean
 
 giteaMailerEnabled:
