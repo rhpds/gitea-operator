@@ -5,16 +5,16 @@ The operator can be recreated by following the steps in https://github.com/redha
 
 == Installing the Operator
 
-. Install the CatalogSource into your cluster:
+The V2 operator can now be installed into its own namespace `gitea-operator` instead of just `openshift-operators`.
+
+. You can create the operator by simply applying the YAML files from the Github repository
 +
 [source]
 ----
-oc apply -f https://raw.githubusercontent.com/rhpds/gitea-operator/master/catalog_source.yaml
+oc apply -k https://raw.githubusercontent.com/rhpds/gitea-operator/main/OLMDeploy
 ----
 
-. Log into your Cluster's Web Console using an account with `cluster-admin` privileges.
-. From the *OperatorHub* find the *Gitea Operator* and install it.
-. This installs the operator cluster wide - which means you (or your users) can greate instances of `Gitea` in any project on the cluster. See below for examples of how to create Giteas.
+. This installs the operator cluster wide - which means you (or your users) can greate instances of `Gitea` in any project on the cluster. See below for examples of how to create Gitea instances.
 
 == Creating Gitea instances
 
