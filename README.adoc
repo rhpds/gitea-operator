@@ -9,7 +9,6 @@ The V2 operator can now be installed into its own namespace `gitea-operator` ins
 
 . You can create the operator by simply applying the YAML files from the Github repository
 +
-[source]
 ----
 oc apply -k https://github.com/rhpds/gitea-operator/OLMDeploy
 ----
@@ -20,7 +19,6 @@ oc apply -k https://github.com/rhpds/gitea-operator/OLMDeploy
 
 . Create a new project for your Gitea instance:
 +
-[source]
 ----
 oc new-project gitea
 ----
@@ -33,8 +31,8 @@ The Gitea Operator can set up a PostgreSQL database alongside the Gitea Pod. Thi
 
 To deploy a simple Gitea instance:
 
-[source]
 ----
+---
 apiVersion: pfe.rhpds.com/v1
 kind: Gitea
 metadata:
@@ -50,8 +48,8 @@ Note that you can specify specific properties for `postgresqlServiceName`, `post
 
 To deploy a simple Gitea instance using OpenShift Container Storage (if the storage class `ocs-storagecluster-ceph-rbd` is not the default storage class):
 
-[source]
 ----
+---
 apiVersion: pfe.rhpds.com/v1
 kind: Gitea
 metadata:
@@ -73,8 +71,8 @@ If an Admin user has been created then you can set the variable `giteaDisableReg
 
 The operator will report the status of the admin user creation as well as the user password in the fields `.status.adminSetupComplete: true` and `.status.adminPassword`.
 
-[source]
 ----
+---
 apiVersion: pfe.rhpds.com/v1
 kind: Gitea
 metadata:
@@ -91,16 +89,16 @@ spec:
 
 The operator can use a password from the admin user that has been pre-created in a secret. The secret *must* be in the same namespace as the gitea instance - and the key for the admin password *must* be `adminPassword`.
 
-Create a secret with the password:
-[source]
+. Create a secret with the password:
++
 ----
 oc create secret generic gitea-admin-password --from-literal=adminPassword=myPassw0rd
 ----
 
-Tell the operator to use the password from the secret:
-
-[source]
+. Tell the operator to use the password from the secret:
++
 ----
+---
 apiVersion: pfe.rhpds.com/v1
 kind: Gitea
 metadata:
@@ -128,8 +126,8 @@ The operator will report the status of the user creation as well as the user pas
 
 Create a single user, `lab-user` with a generated password of length 16:
 
-[source]
 ----
+---
 apiVersion: pfe.rhpds.com/v1
 kind: Gitea
 metadata:
@@ -148,8 +146,8 @@ spec:
 
 Create a three users, `student1`, `student2` and `student3` with password `openshift`:
 
-[source]
 ----
+---
 apiVersion: pfe.rhpds.com/v1
 kind: Gitea
 metadata:
@@ -172,16 +170,16 @@ spec:
 
 The operator can use a password for the created users that has been pre-created in a secret. The secret *must* be in the same namespace as the gitea instance - and the key for the user password *must* be `userPassword`.
 
-Create a secret with the password:
-[source]
+. Create a secret with the password:
++
 ----
 oc create secret generic gitea-user-password --from-literal=userPassword=myPassw0rd
 ----
 
-Tell the operator to use the password from the secret (this example also generates a new 16 character password for the admin user):
-
-[source]
+. Tell the operator to use the password from the secret (this example also generates a new 16 character password for the admin user):
++
 ----
+---
 apiVersion: pfe.rhpds.com/v1
 kind: Gitea
 metadata:
@@ -210,8 +208,8 @@ If the migration was successful the operator sets the field `.status.repoMigrati
 
 Create 2 users `lab-user-1` and `lab-user-2` and migrate two repositories from GitHub to Gitea for each user:
 
-[source]
 ----
+---
 apiVersion: pfe.rhpds.com/v1
 kind: Gitea
 metadata:
@@ -248,8 +246,8 @@ See https://docs.gitea.io/en-us/email-setup for more information on how to set u
 Once e-mail is enabled you can use the variables `giteaRegisterEmailConfirm` and `giteaEnableNotifyMail` to turn on e-mail verification and notification.
 +
 .Example for GMail
-[source]
 ----
+---
 apiVersion: pfe.rhpds.com/v1
 kind: Gitea
 metadata:
@@ -273,7 +271,6 @@ If you want to manage your PostgreSQL database separately from the Gitea pod the
 
 . Create a PostgreSQL database from the OpenShift template:
 +
-[source]
 ----
 oc new-app postgresql-persistent \
    --param DATABASE_SERVICE_NAME=postgresql-gitea \
@@ -288,8 +285,8 @@ You can not specify a storage class when using the OpenShift template. If you ne
 
 . Create a Gitea instance. When using a self-managed database you must set `postgresqlSetup: false` and specify connection information to the database.
 
-[source]
 ----
+---
 apiVersion: pfe.rhpds.com/v1
 kind: Gitea
 metadata:
@@ -319,7 +316,6 @@ The suggested approach is this:
 * Wait until the Gitea instance is running
 * Extract (save) the ConfigMap that has been created (usually in `<gitea-name>-config`)
 +
-[source]
 ----
 oc get configmap gitea-config -n gitea -o yaml >$HOME/configmap.yaml
 ----
@@ -334,7 +330,6 @@ Now you can re-create the configuration from scratch. You can have the Gitea ope
 . Create the ConfigMap (from file or otherwise) making sure the URLs match the desired hostname and the database connectivity matches your PostgreSQL database (either pre-setup of setup by the operator)
 +
 .Example
-[source]
 ----
 [...]
     [database]
@@ -357,8 +352,7 @@ Now you can re-create the configuration from scratch. You can have the Gitea ope
 . Create Gitea making sure the `giteaHostname` is part of the `spec`.
 
 .Example
-[source]
-====
+----
 ---
 apiVersion: pfe.rhpds.com/v1
 kind: Gitea
@@ -380,13 +374,12 @@ spec:
   giteaConfigMapName: custom-gitea-config
   giteaSsl: true
   giteaHostname: gitea.apps.cluster-hyper.hyper.dev.redhatworkshops.io
-====
+----
 
 == API Reference:
 
 Below is a list and description of all possible parameters that can be set for the `Gitea` custom resource.
 
-[source]
 ----
 postgresqlSetup:
   description: 'Set up a PostgreSQL database alongside the Gitea instance. Default is true. If set to false the values for giteaPostgresqlServiceName, giteaPostgresqlDatabaseName, giteaPostgresqlUser and giteaPostgresqlPassword need to be specified to connect to an existing PostgreSQL database. If set to true no values need to be specified for database name, database service, database user and database service.'
