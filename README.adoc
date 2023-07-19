@@ -11,7 +11,7 @@ The V2 operator can now be installed into its own namespace `gitea-operator` ins
 +
 [source]
 ----
-oc apply -k https://raw.githubusercontent.com/rhpds/gitea-operator/main/OLMDeploy
+oc apply -k https://github.com/rhpds/gitea-operator/OLMDeploy
 ----
 
 . This installs the operator cluster wide - which means you (or your users) can greate instances of `Gitea` in any project on the cluster. See below for examples of how to create Gitea instances.
