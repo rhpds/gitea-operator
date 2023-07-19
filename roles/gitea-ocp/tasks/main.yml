@@ -87,6 +87,7 @@
 
   - name: Set admin password from secret
     when:
+    - r_admin_password_secret.resources is defined
     - r_admin_password_secret.resources | length > 0
     - r_admin_password_secret.resources[0].data is defined
     - r_admin_password_secret.resources[0].data.adminPassword is defined
@@ -194,6 +195,7 @@
 
   - name: Set user password from secret
     when:
+    - r_user_password_secret.resources is defined
     - r_user_password_secret.resources | length > 0
     - r_user_password_secret.resources[0].data is defined
     - r_user_password_secret.resources[0].data.userPassword is defined
