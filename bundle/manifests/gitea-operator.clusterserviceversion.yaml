@@ -281,5 +281,5 @@ spec:
     name: Wolfgang Kulhanek
   maturity: stable
   provider:
-    name: Red Hat Portfolio Engineering
+    name: Red Hat Portfolio Technology
   version: 2.0.0
