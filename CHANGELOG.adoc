@@ -16,6 +16,6 @@
 * Added the capability to specify your own `app.ini` configuration file in a ConfigMap.
 ** `giteaConfigMapName`: Name of a config map in the same namespace as the Gitea custom resource. The config map must contain one file called `app.ini` to configure Gitea. If this variable is set then `giteaHostname` *must* also be set. `giteaSsl` should be set but will default to false.
 * Enable customization of the Web Hook permissions. The Gitea default is to allow only external targets for a web hook and only with validated certificates. For connection _inside_ an OpenShift cluster this does not work.
-** giteaWebhookAllowedHostList: List of hosts that a web hook is allowed to call. See https://docs.gitea.com/next/administration/config-cheat-sheet#webhook-webhook for more details. The default for the operator is 'external,private' allowing connections inside the clusetr as well.
-** giteaWebhookSkipTlsVerify: Set to 'true' to skip validation of the webhook target URL certificate.
+** `giteaWebhookAllowedHostList`: List of hosts that a web hook is allowed to call. See https://docs.gitea.com/next/administration/config-cheat-sheet#webhook-webhook for more details. The default for the operator is 'external,private' allowing connections inside the clusetr as well.
+** `giteaWebhookSkipTlsVerify`: Set to 'true' to skip validation of the webhook target URL certificate.
                     
