@@ -50,7 +50,7 @@ data:
     ENABLED = {{ _gitea_mailer_enabled | bool }}
     {% if _gitea_mailer_enabled | bool %}
     FROM           = {{ _gitea_mailer_from }}
-    MAILER_TYPE    = {{ _gitea_mailer_type }}
+    PROTOCOL       = {{ _gitea_mailer_type }}
     HOST           = {{ _gitea_mailer_host }}
     IS_TLS_ENABLED = {{ _gitea_mailer_tls | bool }}
     USER           = {{ _gitea_mailer_user }}
