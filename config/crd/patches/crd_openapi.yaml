@@ -253,11 +253,14 @@ spec:
               giteaMailerFrom:
                 description: E-mail integration. FROM e-mail address to be used. Default is "".
                 type: string
-              giteaMailerType:
-                description: Type of e-mail provider to be used. Default is smtp.
+              giteaMailerProtocol:
+                description: Protocol of e-mail provider to be used. Default is smtps.
                 type: string
               giteaMailerHost:
                 description: Hostname of the e-mail server to be used. Default is "".
+                type: string
+              giteaMailerPort:
+                description: Port of the e-mail server to be used. Default is "".
                 type: string
               giteaMailerTls:
                 description: Use TLS encryption when connecting to the mailer host. Default is true.
