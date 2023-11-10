@@ -260,8 +260,8 @@ spec:
                 description: Hostname of the e-mail server to be used. Default is "".
                 type: string
               giteaMailerPort:
-                description: Port of the e-mail server to be used. Default is "".
-                type: string
+                description: Port of the e-mail server to be used. Default is 465.
+                type: integer
               giteaMailerTls:
                 description: Use TLS encryption when connecting to the mailer host. Default is true.
                 type: boolean
