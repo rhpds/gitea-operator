@@ -95,7 +95,7 @@
       _gitea_mailer_from: "{{ gitea_mailer_from | default('') }}"
       _gitea_mailer_protocol: "{{ gitea_mailer_protocol | default('smtps') }}"
       _gitea_mailer_host: "{{ gitea_mailer_host | default('') }}"
-      _gitea_mailer_port: "{{ gitea_mailer_port | default('') }}"
+      _gitea_mailer_port: "{{ gitea_mailer_port | default(465) }}"
       _gitea_mailer_tls: "{{ gitea_mailer_tls | default(true) | bool }}"
       _gitea_mailer_user: "{{ gitea_mailer_user | default('') }}"
       _gitea_mailer_password: "{{ gitea_mailer_password | default('') }}"

@@ -49,7 +49,7 @@ spec:
                 description: If a giteaAdminUser is provided but no giteaAdminPassowrd
                   is provided a random ASCII password with the length specified will
                   be created. Default is 16
-                type: string
+                type: integer
               giteaAdminPasswordSecretName:
                 description: Name of a secret containing the Gitea admin user's password
                   in secret key adminPassword. If this variable is set it takes precedence
@@ -154,8 +154,8 @@ spec:
                 type: string
               giteaMailerPort:
                 description: Port of the e-mail server to be used. Default is
-                  "".
-                type: string
+                  465.
+                type: integer
               giteaMailerPassword:
                 description: Password for the User ID on the e-mail server to be used.
                   May need to be an app-specific password if two-factor authentication
