@@ -255,8 +255,9 @@ metadata:
 spec:
   giteaMailerEnabled: true
   giteaMailerFrom: gmail-user@gmail.com
-  giteaMailerType: smtp
-  giteaMailerHost: smtp.gmail.com:465
+  giteaMailerProtocol: smtps
+  giteaMailerHost: smtp.gmail.com
+  giteaMailerPort: 465
   giteaMailerUser: gmail-user@gmail.com
   giteaMailerPassword: gmail-user-app-specific-password
   giteaMailerTls: true
@@ -610,11 +611,14 @@ giteaMailerEnabled:
 giteaMailerFrom:
   description: 'E-mail integration. FROM e-mail address to be used. Default: ""'
   type: string
-giteaMailerType:
-  description: 'Type of e-mail provider to be used. Default: smtp'
+giteaMailerProtocol:
+  description: 'Protocol of e-mail provider to be used. Default: smtps'
   type: string
 giteaMailerHost:
   description: 'Hostname of the e-mail server to be used. Default: ""'
+  type: string
+giteaMailerPort:
+  description: 'Port of the e-mail server to be used. Default: ""'
   type: string
 giteaMailerTls:
   description: 'Use TLS encryption when connecting to the mailer host. Default: true'
