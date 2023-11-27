@@ -53,9 +53,9 @@ data:
     PROTOCOL       = {{ _gitea_mailer_protocol }}
     SMTP_ADDR      = {{ _gitea_mailer_host }}
     SMTP_PORT      = {{ _gitea_mailer_port }}
-    IS_TLS_ENABLED = {{ _gitea_mailer_tls | bool }}
     USER           = {{ _gitea_mailer_user }}
     PASSWD         = `{{ _gitea_mailer_password }}`
+    HELO_HOSTNAME  = {{ _gitea_mailer_helo_hostname }}
 
     [service]
     REGISTER_EMAIL_CONFIRM            = {{ _gitea_register_email_confirm | bool }}

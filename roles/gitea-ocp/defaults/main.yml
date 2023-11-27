@@ -95,7 +95,6 @@ _gitea_mailer_from: gitea@mydomain.com
 _gitea_mailer_protocol: smtps
 _gitea_mailer_host: mail.mydomain.com
 _gitea_mailer_port: 465
-_gitea_mailer_tls: true
 _gitea_mailer_user: gitea@mydomain.com
 _gitea_mailer_password: password
 _gitea_mailer_helo_hostname: ""

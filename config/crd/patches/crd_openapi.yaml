@@ -262,9 +262,6 @@ spec:
               giteaMailerPort:
                 description: Port of the e-mail server to be used. Default is 465.
                 type: integer
-              giteaMailerTls:
-                description: Use TLS encryption when connecting to the mailer host. Default is true.
-                type: boolean
               giteaMailerUser:
                 description: User ID on the e-mail server to use. Frequently the same as the value for giteaMailerFrom. Default is "".
                 type: string

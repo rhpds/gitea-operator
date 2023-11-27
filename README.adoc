@@ -260,7 +260,6 @@ spec:
   giteaMailerPort: 465
   giteaMailerUser: gmail-user@gmail.com
   giteaMailerPassword: gmail-user-app-specific-password
-  giteaMailerTls: true
   giteaMailerHeloHostname: example.com
   giteaRegisterEmailConfirm: true
   giteaEnableNotifyMail: true
@@ -619,10 +618,7 @@ giteaMailerHost:
   type: string
 giteaMailerPort:
   description: 'Port of the e-mail server to be used. Default: ""'
-  type: string
-giteaMailerTls:
-  description: 'Use TLS encryption when connecting to the mailer host. Default: true'
-  type: boolean
+  type: integer
 giteaMailerUser:
   description: 'User ID on the e-mail server to use. Frequently the same as the value for giteaMailerFrom. Default: ""'
   type: string
