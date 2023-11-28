@@ -48,7 +48,7 @@ data:
 {% endif %}
     [mailer]
     ENABLED = {{ _gitea_mailer_enabled | bool }}
-    {% if _gitea_mailer_enabled | bool %}
+{% if _gitea_mailer_enabled | bool %}
     FROM           = {{ _gitea_mailer_from }}
     PROTOCOL       = {{ _gitea_mailer_protocol }}
     SMTP_ADDR      = {{ _gitea_mailer_host }}
@@ -57,6 +57,7 @@ data:
     PASSWD         = `{{ _gitea_mailer_password }}`
     HELO_HOSTNAME  = {{ _gitea_mailer_helo_hostname }}
 
+{% endif %}
     [service]
     REGISTER_EMAIL_CONFIRM            = {{ _gitea_register_email_confirm | bool }}
     ENABLE_NOTIFY_MAIL                = {{ _gitea_enable_notify_mail | bool }}
