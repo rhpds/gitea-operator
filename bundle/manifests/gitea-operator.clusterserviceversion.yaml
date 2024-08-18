@@ -18,10 +18,10 @@ metadata:
         }
       ]
     capabilities: Basic Install
-    createdAt: "2023-07-18T18:25:15Z"
-    operators.operatorframework.io/builder: operator-sdk-v1.30.0
+    createdAt: "2024-03-26T12:12:10Z"
+    operators.operatorframework.io/builder: operator-sdk-v1.34.1
     operators.operatorframework.io/project_layout: ansible.sdk.operatorframework.io/v1
-  name: gitea-operator.v2.0.0
+  name: gitea-operator.v2.0.6
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -69,6 +69,12 @@ spec:
           - list
           - patch
           - update
+          - watch
+        - apiGroups:
+          - ""
+          resources:
+          - secrets
+          verbs:
           - watch
         - apiGroups:
           - pfe.rhpds.com
@@ -196,7 +202,7 @@ spec:
                 env:
                 - name: ANSIBLE_GATHERING
                   value: explicit
-                image: quay.io/rhpds/gitea-operator:v2.0.0
+                image: quay.io/rhpds/gitea-operator:v2.0.6
                 livenessProbe:
                   httpGet:
                     path: /healthz
@@ -282,4 +288,4 @@ spec:
   maturity: stable
   provider:
     name: Red Hat Portfolio Technology
-  version: 2.0.0
+  version: 2.0.6

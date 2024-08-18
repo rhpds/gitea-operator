@@ -152,17 +152,16 @@ spec:
                 description: Hostname of the e-mail server to be used. Default is
                   "".
                 type: string
-              giteaMailerPort:
-                description: Port of the e-mail server to be used. Default is
-                  465.
-                type: integer
               giteaMailerPassword:
                 description: Password for the User ID on the e-mail server to be used.
                   May need to be an app-specific password if two-factor authentication
                   is enabled on the e-mail server. Default is "".
                 type: string
+              giteaMailerPort:
+                description: Port of the e-mail server to be used. Default is 465.
+                type: integer
               giteaMailerProtocol:
-                description: Protocol of e-mail provider to be used. Default is smtp.
+                description: Protocol of e-mail provider to be used. Default is smtps.
                 type: string
               giteaMailerUser:
                 description: User ID on the e-mail server to use. Frequently the same

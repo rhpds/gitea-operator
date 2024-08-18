@@ -7,7 +7,7 @@ metadata:
   namespace: gitea-operator
 spec:
   sourceType: grpc
-  image: quay.io/rhpds/gitea-catalog:v2.0.3
+  image: quay.io/rhpds/gitea-catalog:latest
   displayName: Red Hat Demo Platform (Gitea)
   publisher: Red Hat Demo Platform
 
