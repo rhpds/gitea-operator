@@ -79,7 +79,7 @@ _gitea_http_port: 3000
 _gitea_ssh_port: 2022
 _gitea_disable_ssh: false
 _gitea_start_ssh_server: true
-_gitea_start_lfs_server: true
+gitea_start_lfs_server: true
 _gitea_disable_registration: false
 _gitea_enable_captcha: false
 _gitea_allow_create_organization: true
