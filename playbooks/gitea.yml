@@ -84,6 +84,7 @@
       _gitea_ssh_port: "{{ gitea_ssh_port | default(2022) }}"
       _gitea_disable_ssh: "{{ gitea_disable_ssh | default(true) | bool }}"
       _gitea_start_ssh_server: "{{ gitea_start_ssh_server | default(false) | bool }}"
+      _gitea_start_lfs_server: "{{ gitea_start_lfs_server | default(true) | bool }}"
       _gitea_disable_registration: "{{ gitea_disable_registration | default(false) | bool }}"
       _gitea_enable_captcha: "{{ gitea_enable_captcha | default(false) | bool }}"
       _gitea_allow_create_organization: "{{ gitea_allow_create_organization | default(true) | bool }}"

@@ -38,7 +38,7 @@ data:
     SSH_PORT         = {{ _gitea_ssh_port }}
     DISABLE_SSH      = {{ _gitea_disable_ssh | bool }}
     START_SSH_SERVER = {{ _gitea_start_ssh_server | bool }}
-    LFS_START_SERVER = False
+    LFS_START_SERVER = {{ _gitea_start_lfs_server | bool }}
     OFFLINE_MODE     = False
 
 {% if _gitea_allow_local_network_migration | bool %}
