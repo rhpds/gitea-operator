@@ -227,6 +227,9 @@ spec:
               giteaStartSshServer:
                 description: Start SSH Server in the Gitea container. Default is false.
                 type: boolean
+              giteaStartLfsServer:
+                description: Start LFS Server in the Gitea container. Default is false.
+                type: boolean
               giteaDisableRegistration:
                 description: Disable user self-registration. If this flag is set an Admin User should be specified to be created. Otherwise no users can be created at all. Default is false.
                 type: boolean
