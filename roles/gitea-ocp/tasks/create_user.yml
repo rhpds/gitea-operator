@@ -19,6 +19,9 @@
     force_basic_auth: true
     status_code: [ 200, 404 ]
   register: r_gitea_insystem_user
+  retries: 20
+  delay: 5
+  until: r_gitea_insystem_user is succeeded
 
 - name: Create the user
   when: r_gitea_insystem_user.status == 404
@@ -42,3 +45,7 @@
         "send_notify": false,
         "username": "{{ _gitea_user_name }}"
       }
+  register: r_create_user
+  retries: 20
+  delay: 5
+  until: r_create_user.status == 201

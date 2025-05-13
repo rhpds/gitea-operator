@@ -60,3 +60,7 @@
         "repo_name": "{{ item[1]['name'] }}",
         "uid": {{ r_gitea_insystem_user.json.id | int }}
       }
+  register: r_migrate_repo
+  retries: 20
+  delay: 5
+  until: r_migrate_repo.status == 201

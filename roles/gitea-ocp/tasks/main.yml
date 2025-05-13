@@ -8,7 +8,7 @@
 - name: Create OpenShift objects for Gitea
   kubernetes.core.k8s:
     state: present
-    definition: "{{ lookup('template', item ) | from_yaml }}"
+    definition: "{{ lookup('template', item) | from_yaml }}"
   loop:
   - serviceaccount.yaml.j2
   - persistentvolumeclaim.yaml.j2
@@ -32,12 +32,12 @@
   when: _gitea_config_map_name | default('') | length == 0
   kubernetes.core.k8s:
     state: present
-    definition: "{{ lookup('template', 'configmap.yaml.j2' ) | from_yaml }}"
+    definition: "{{ lookup('template', 'configmap.yaml.j2') | from_yaml }}"
 
 - name: Create Gitea deployment
   kubernetes.core.k8s:
     state: present
-    definition: "{{ lookup('template', 'deployment.yaml.j2' ) | from_yaml }}"
+    definition: "{{ lookup('template', 'deployment.yaml.j2') | from_yaml }}"
 
 - name: Wait until application is available
   kubernetes.core.k8s_info:
@@ -106,7 +106,7 @@
     when:
     - _gitea_admin_password_secret_name | default("") | length == 0
     - _gitea_admin_password | default("") | length == 0
-    set_fact:
+    ansible.builtin.set_fact:
       _gitea_actual_admin_password: >-
         {{ lookup('password', '/dev/null length={{ _gitea_admin_password_length | default( 16 ) }} chars=ascii_letters,digits') }}
 
@@ -214,12 +214,12 @@
     when:
     - _gitea_user_password_secret_name | default("") | length == 0
     - _gitea_user_password | default("") | length == 0
-    set_fact:
+    ansible.builtin.set_fact:
       _gitea_actual_user_password: >-
         {{ lookup('password', '/dev/null length={{ _gitea_user_password_length | default( 16 ) }} chars=ascii_letters,digits') }}
 
   - name: Create the users in Gitea
-    include_tasks: create_user.yml
+    ansible.builtin.include_tasks: create_user.yml
     loop: "{{ range(1, _gitea_user_number | int + 1) | list }}"
 
   - name: Save user password in custom resource status
@@ -247,11 +247,11 @@
     - r_gitea.resources[0].status.repoMigrationComplete is not defined
     block:
     - name: Migrate repositories
-      include_tasks: migrate_repos.yml
+      ansible.builtin.include_tasks: migrate_repos.yml
       loop: >-
         {{
         ( range(1, _gitea_user_number | int + 1) | list )
-        | product( _gitea_repositories_list )
+        | product(_gitea_repositories_list)
         | list
         }}
 
