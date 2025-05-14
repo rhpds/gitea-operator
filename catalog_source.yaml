@@ -1,0 +1,13 @@
+
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: redhat-rhpds-gitea
+  namespace: openshift-marketplace
+spec:
+  sourceType: grpc
+  image: quay.io/rhpds/gitea-catalog:v2.1.0
+  displayName: Red Hat Demo Platform (Gitea)
+  publisher: Red Hat Demo Platform
+

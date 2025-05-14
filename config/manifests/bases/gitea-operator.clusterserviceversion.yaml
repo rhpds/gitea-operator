@@ -1,0 +1,43 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  annotations:
+    alm-examples: '[]'
+    capabilities: Basic Install
+  name: gitea-operator.v0.0.0
+  namespace: placeholder
+spec:
+  apiservicedefinitions: {}
+  customresourcedefinitions: {}
+  description: Gitea Operator - provided by Red Hat Demo Platform, see https://github.com/rhpds/gitea-operator
+    for documentation.
+  displayName: Gitea Operator
+  icon:
+  - base64data: ""
+    mediatype: ""
+  install:
+    spec:
+      deployments: null
+    strategy: ""
+  installModes:
+  - supported: false
+    type: OwnNamespace
+  - supported: false
+    type: SingleNamespace
+  - supported: false
+    type: MultiNamespace
+  - supported: true
+    type: AllNamespaces
+  keywords:
+  - gitea
+  - repository
+  links:
+  - name: Gitea Operator
+    url: https://gitea-operator.domain
+  maintainers:
+  - email: wkulhane@redhat.com
+    name: Wolfgang Kulhanek
+  maturity: alpha
+  provider:
+    name: Red Hat Portfolio Technical Marketing and Platforms
+  version: 0.0.0

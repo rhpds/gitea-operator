@@ -1,0 +1,11 @@
+
+---
+apiVersion: pfe.rhpds.com/v1
+kind: Gitea
+metadata:
+  name: repository
+spec:
+  postgresqlVolumeSize: 4Gi
+  giteaVolumeSize: 4Gi
+  giteaSsl: True
+
