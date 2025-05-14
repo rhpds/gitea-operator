@@ -81,14 +81,14 @@ spec:
                 - type: integer
                 - type: string
                 description: CPU limit for Gitea. Default is '500m'.
-                pattern: ^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$
+                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                 x-kubernetes-int-or-string: true
               giteaCpuRequest:
                 anyOf:
                 - type: integer
                 - type: string
                 description: CPU request for Gitea. Default is '200m'.
-                pattern: ^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$
+                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                 x-kubernetes-int-or-string: true
               giteaCreateUsers:
                 description: Create users in Gitea. Only possible if an admin user
@@ -157,11 +157,12 @@ spec:
                   May need to be an app-specific password if two-factor authentication
                   is enabled on the e-mail server. Default is "".
                 type: string
-              giteaMailerPort:
-                description: Port of the e-mail server to be used. Default is 465.
-                type: integer
-              giteaMailerProtocol:
-                description: Protocol of e-mail provider to be used. Default is smtps.
+              giteaMailerTls:
+                description: Use TLS encryption when connecting to the mailer host.
+                  Default is true.
+                type: boolean
+              giteaMailerType:
+                description: Type of e-mail provider to be used. Default is smtp.
                 type: string
               giteaMailerUser:
                 description: User ID on the e-mail server to use. Frequently the same
@@ -229,6 +230,9 @@ spec:
                 description: Create an HTTPS terminated route for Gitea. Default is
                   'false'
                 type: boolean
+              giteaStartLfsServer:
+                description: 'Start LFS Server in the Gitea container. Default: false'
+                type: boolean
               giteaStartSshServer:
                 description: Start SSH Server in the Gitea container. Default is false.
                 type: boolean
@@ -285,14 +289,14 @@ spec:
                 - type: integer
                 - type: string
                 description: CPU limit for the PostgreSQL database. Default is '500m'.
-                pattern: ^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$
+                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                 x-kubernetes-int-or-string: true
               postgresqlCpuRequest:
                 anyOf:
                 - type: integer
                 - type: string
                 description: CPU request for the PostgreSQL database. Default is '200m'.
-                pattern: ^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$
+                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                 x-kubernetes-int-or-string: true
               postgresqlDatabaseName:
                 description: Name of the PostgreSQL Database to be created. Default

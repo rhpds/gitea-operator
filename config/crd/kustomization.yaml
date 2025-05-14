@@ -3,7 +3,8 @@
 # It should be run by config/default
 resources:
 - bases/pfe.rhpds.com_gitea.yaml
-#+kubebuilder:scaffold:crdkustomizeresource
+# +kubebuilder:scaffold:crdkustomizeresource
+
 patches:
 - path: ./patches/crd_openapi.yaml
   target:

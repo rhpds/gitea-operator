@@ -1,23 +1,19 @@
-# permissions for end users to edit gitea.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
+  creationTimestamp: null
   labels:
-    app.kubernetes.io/name: gitea-operator
     app.kubernetes.io/managed-by: kustomize
-  name: gitea-editor-role
+    app.kubernetes.io/name: gitea-operator
+  name: gitea-operator-gitea-viewer-role
 rules:
 - apiGroups:
   - pfe.rhpds.com
   resources:
   - gitea
   verbs:
-  - create
-  - delete
   - get
   - list
-  - patch
-  - update
   - watch
 - apiGroups:
   - pfe.rhpds.com

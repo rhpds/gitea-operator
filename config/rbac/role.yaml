@@ -37,12 +37,6 @@ rules:
       - patch
       - update
       - watch
-  - apiGroups:
-      - ""
-    resources:
-      - secrets
-    verbs:
-      - watch
   ##
   ## Rules for pfe.rhpds.com/v1, Kind: Gitea
   ##
@@ -60,7 +54,7 @@ rules:
       - patch
       - update
       - watch
-#+kubebuilder:scaffold:rules
+# +kubebuilder:scaffold:rules
   - apiGroups:
       - ""
     resources:

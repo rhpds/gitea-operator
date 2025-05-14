@@ -15,7 +15,7 @@ spec:
   - name: v1
     schema:
       openAPIV3Schema:
-        description: Gitea is the Schema for the giteas API
+        description: Gitea is the Schema for the gitea API
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation

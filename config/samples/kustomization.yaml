@@ -1,4 +1,4 @@
 ## Append samples of your project ##
 resources:
-- pfe_v1_gitea.yaml
-#+kubebuilder:scaffold:manifestskustomizesamples
+- gitea-server.yaml
+# +kubebuilder:scaffold:manifestskustomizesamples

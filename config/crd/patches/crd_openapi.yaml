@@ -80,14 +80,14 @@ spec:
                 anyOf:
                 - type: integer
                 - type: string
-                pattern: "^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$"
+                pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                 x-kubernetes-int-or-string: true
               postgresqlCpuLimit:
                 description: CPU limit for the PostgreSQL database. Default is '500m'.
                 anyOf:
                 - type: integer
                 - type: string
-                pattern: "^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$"
+                pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                 x-kubernetes-int-or-string: true
 
               giteaServiceName:
@@ -125,14 +125,14 @@ spec:
                 anyOf:
                 - type: integer
                 - type: string
-                pattern: "^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$"
+                pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                 x-kubernetes-int-or-string: true
               giteaCpuLimit:
                 description: CPU limit for Gitea. Default is '500m'.
                 anyOf:
                 - type: integer
                 - type: string
-                pattern: "^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$"
+                pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                 x-kubernetes-int-or-string: true
 
               giteaPostgresqlServiceName:
@@ -228,7 +228,7 @@ spec:
                 description: Start SSH Server in the Gitea container. Default is false.
                 type: boolean
               giteaStartLfsServer:
-                description: Start LFS Server in the Gitea container. Default is false.
+                description: 'Start LFS Server in the Gitea container. Default: false'
                 type: boolean
               giteaDisableRegistration:
                 description: Disable user self-registration. If this flag is set an Admin User should be specified to be created. Otherwise no users can be created at all. Default is false.
@@ -256,15 +256,15 @@ spec:
               giteaMailerFrom:
                 description: E-mail integration. FROM e-mail address to be used. Default is "".
                 type: string
-              giteaMailerProtocol:
-                description: Protocol of e-mail provider to be used. Default is smtps.
+              giteaMailerType:
+                description: Type of e-mail provider to be used. Default is smtp.
                 type: string
               giteaMailerHost:
                 description: Hostname of the e-mail server to be used. Default is "".
                 type: string
-              giteaMailerPort:
-                description: Port of the e-mail server to be used. Default is 465.
-                type: integer
+              giteaMailerTls:
+                description: Use TLS encryption when connecting to the mailer host. Default is true.
+                type: boolean
               giteaMailerUser:
                 description: User ID on the e-mail server to use. Frequently the same as the value for giteaMailerFrom. Default is "".
                 type: string
