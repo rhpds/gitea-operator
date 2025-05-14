@@ -4,4 +4,4 @@
   group: pfe.rhpds.com
   kind: Gitea
   playbook: playbooks/gitea.yml
-#+kubebuilder:scaffold:watch
+# +kubebuilder:scaffold:watch

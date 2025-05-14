@@ -12,6 +12,3 @@ bin
 *.swp
 *.swo
 *~
-
-# Ignore .vscode folder
-.vscode/
