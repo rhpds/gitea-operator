@@ -117,6 +117,9 @@
       validate_certs: false
       status_code: 200, 404
     register: r_gitea_admin_user
+    retries: 20
+    delay: 5
+    until: r_gitea_admin_user.status == 200 or r_gitea_admin_user.status == 404
     failed_when: r_gitea_admin_user.status != 200 and r_gitea_admin_user.status != 404
 
   - name: Create Gitea admin user
