@@ -1,6 +1,6 @@
 = Gitea Operator
 
-This repository holds the source code for the Red Hat Porfolio Marketing Gitea Operator.
+This repository holds the source code for the Red Hat Portfolio Marketing Gitea Operator.
 The operator can be recreated by following the steps in https://github.com/redhat-cop/openshift-lab-origin/blob/master/OpenShift4/Building_Ansible_Operator_for_Gitea.adoc.
 
 == Installing the Operator
@@ -13,7 +13,7 @@ The V2 operator can now be installed into its own namespace `gitea-operator` ins
 oc apply -k https://github.com/rhpds/gitea-operator/OLMDeploy
 ----
 
-. This installs the operator cluster wide - which means you (or your users) can greate instances of `Gitea` in any project on the cluster. See below for examples of how to create Gitea instances.
+. This installs the operator cluster wide - which means you (or your users) can create instances of `Gitea` in any project on the cluster. See below for examples of how to create Gitea instances.
 
 == Creating Gitea instances
 
@@ -65,7 +65,7 @@ spec:
 
 === Create Admin User
 
-The Operator can create an Admin User in the Gitea instance. If a Admin User ID is specified you can specify a password for the admin user as well. If no password is specified a password is generated with a certain length. The length of the generated password can be set via the password length variable.
+The Operator can create an Admin User in the Gitea instance. If an Admin User ID is specified you can specify a password for the admin user as well. If no password is specified a password is generated with a certain length. The length of the generated password can be set via the password length variable.
 
 If an Admin user has been created then you can set the variable `giteaDisableRegistration: false`. This will disable user self-registration - only the admin user will be able to create other users on Gitea.
 
@@ -120,7 +120,7 @@ The operator can create a single user - or a number of users based on a username
 
 You can specify a common password for all regular users. If no password is specified a password is generated with a certain length. The length of the generated password can be set via the password length variable.
 
-If an users have been created then you can set the variable `giteaDisableRegistration: false`. This will disable user self-registration - only the admin user will be able to create additional users on Gitea.
+If users have been created then you can set the variable `giteaDisableRegistration: false`. This will disable user self-registration - only the admin user will be able to create additional users on Gitea.
 
 The operator will report the status of the user creation as well as the user password in the fields `.status.userSetupComplete: true` and `.status.userPassword`.
 
