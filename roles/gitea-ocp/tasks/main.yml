@@ -185,7 +185,8 @@
   when:
   - _gitea_create_users | bool
   - _gitea_admin_user | default("") | length > 0
-  - r_gitea.resources[0].status.userSetupComplete is not defined
+  - _gitea_user_number | default(0) | int > 0
+  - not r_gitea.resources[0].status.userSetupComplete | default(false) | bool
   block:
   - name: Check if secret is specified with user password
     when: _gitea_user_password_secret_name | default("") | length > 0
@@ -247,7 +248,7 @@
   - name: Migrate the repositories for the Gitea users
     when:
     - _gitea_migrate_repositories | bool
-    - r_gitea.resources[0].status.repoMigrationComplete is not defined
+    - not r_gitea.resources[0].status.repoMigrationComplete | default(false) | bool
     block:
     - name: Migrate repositories
       ansible.builtin.include_tasks: migrate_repos.yml
