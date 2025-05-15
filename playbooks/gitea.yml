@@ -66,7 +66,6 @@
       _gitea_admin_password_secret_name: "{{ gitea_admin_password_secret_name | default('') }}"
       _gitea_admin_password: "{{ gitea_admin_password | default('') }}"
       _gitea_admin_password_length: "{{ gitea_admin_password_length | default(16) }}"
-      _gitea_admin_password_expose: "{{ gitea_admin_password_expose | default(true) }}"
 
       _gitea_create_users: "{{ gitea_create_users | default(false) }}"
       _gitea_user_number: "{{ gitea_user_number | default(2) }}"
@@ -75,7 +74,6 @@
       _gitea_user_password_secret_name: "{{ gitea_user_password_secret_name | default('') }}"
       _gitea_user_password: "{{ gitea_user_password | default('') }}"
       _gitea_user_password_length: "{{ gitea_user_password_length | default(16) }}"
-      _gitea_user_password_expose: "{{ gitea_user_password_expose | default(true) }}"
 
       _gitea_migrate_repositories: "{{ gitea_migrate_repositories | default(false) }}"
       _gitea_repositories_list: "{{ gitea_repositories_list | default([]) }}"

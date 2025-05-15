@@ -40,11 +40,6 @@ spec:
                   empty a random password will be created with length of giteaAdminPasswordLength
                   random ASCII characters. Default is ''
                 type: string
-              giteaAdminPasswordExpose:
-                description: Expose the final Gitea admin password in the custom resource
-                  status section. Default is true for compatibility. Set to false
-                  to not show the password in the status section.
-                type: boolean
               giteaAdminPasswordLength:
                 description: If a giteaAdminUser is provided but no giteaAdminPassowrd
                   is provided a random ASCII password with the length specified will
@@ -251,11 +246,6 @@ spec:
                   or empty a random password will be created with length of giteaUserPasswordLength
                   random ASCII characters. Default is ""
                 type: string
-              giteaUserPasswordExpose:
-                description: Expose the common Gitea user password in the custom resource
-                  status section. Default is true for compatibility. Set to false
-                  to not show the password in the status section.
-                type: boolean
               giteaUserPasswordLength:
                 description: If a giteaCreateUsers is set but no giteaUserPassowrd
                   is provided a random ASCII password with the length specified will

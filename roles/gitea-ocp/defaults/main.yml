@@ -38,10 +38,6 @@ _gitea_admin_email: "opentlc-mgr@open.redhat.com"
 _gitea_admin_password_secret_name: ""
 _gitea_admin_password: ""
 _gitea_admin_password_length: 16
-# Write actual user password into the CR status field
-# Maybe good idea to set to false when setting password from
-# a secret. Default stays true for compatibility reaons
-_gitea_admin_password_expose: true
 
 # Create users in Gitea. If set to true an Admin user *must* be created.
 _gitea_create_users: false
@@ -58,10 +54,6 @@ _gitea_user_email_domain: example.com
 _gitea_user_password_secret_name: ""
 _gitea_user_password: ""
 _gitea_user_password_length: 16
-# Write actual user password into the CR status field
-# Maybe good idea to set to false when setting password from
-# a secret. Default stays true for compatibility reaons
-_gitea_user_password_expose: true
 
 # Set up repositories for all created users - also handled
 # by the workload, not the operator

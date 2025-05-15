@@ -53,14 +53,6 @@
   delay: 10
   ignore_errors: true
 
-- name: Retrieve Gitea resource
-  kubernetes.core.k8s_info:
-    api_version: pfe.rhpds.com/v1
-    kind: Gitea
-    name: "{{ _gitea_name }}"
-    namespace: "{{ _gitea_namespace }}"
-  register: r_gitea
-
 - name: Save route in custom resource status
   operator_sdk.util.k8s_status:
     api_version: pfe.rhpds.com/v1
@@ -71,9 +63,17 @@
       giteaRoute: "{{ _gitea_actual_route_url }}"
       giteaHostname: "{{ _gitea_actual_route_hostname }}"
 
+- name: Retrieve Gitea resource to check admin setup
+  kubernetes.core.k8s_info:
+    api_version: pfe.rhpds.com/v1
+    kind: Gitea
+    name: "{{ _gitea_name }}"
+    namespace: "{{ _gitea_namespace }}"
+  register: r_gitea_admin
+
 - name: Set up admin user
   when:
-  - r_gitea.resources[0].status.adminSetupComplete is not defined
+  - not r_gitea_admin.resources[0].status.adminSetupComplete | default(false) | bool
   - _gitea_admin_user | default("") | length > 0
   block:
   - name: Check if secret is specified with admin password
@@ -146,19 +146,7 @@
           --admin
       register: r_create_admin_user
 
-    - name: Save admin password in custom resource status
-      when:
-      - r_create_admin_user.return_code == 0
-      - _gitea_admin_password_expose | bool
-      operator_sdk.util.k8s_status:
-        api_version: pfe.rhpds.com/v1
-        kind: Gitea
-        name: "{{ _gitea_name }}"
-        namespace: "{{ _gitea_namespace }}"
-        status:
-          adminPassword: "{{ _gitea_actual_admin_password }}"
-
-    - name: Save admin setup complete custom resource status
+    - name: Save admin password and status in custom resource status
       when: r_create_admin_user.return_code == 0
       operator_sdk.util.k8s_status:
         api_version: pfe.rhpds.com/v1
@@ -166,7 +154,17 @@
         name: "{{ _gitea_name }}"
         namespace: "{{ _gitea_namespace }}"
         status:
+          adminPassword: "{{ _gitea_actual_admin_password }}"
           adminSetupComplete: true
+
+- name: Retrieve Gitea resource to check user setup
+  when: _gitea_create_users | bool
+  kubernetes.core.k8s_info:
+    api_version: pfe.rhpds.com/v1
+    kind: Gitea
+    name: "{{ _gitea_name }}"
+    namespace: "{{ _gitea_namespace }}"
+  register: r_gitea_users
 
 - name: Sanity check to only create users when admin user created
   when:
@@ -186,8 +184,13 @@
   - _gitea_create_users | bool
   - _gitea_admin_user | default("") | length > 0
   - _gitea_user_number | default(0) | int > 0
-  - not r_gitea.resources[0].status.userSetupComplete | default(false) | bool
+  - r_gitea_users.resources[0].status.adminPassword | default("") | length > 0
+  - not r_gitea_users.resources[0].status.userSetupComplete | default(false) | bool
   block:
+  - name: Set actual admin password
+    ansible.builtin.set_fact:
+      _gitea_actual_admin_password: "{{ r_gitea_users.resources[0].status.adminPassword }}"
+
   - name: Check if secret is specified with user password
     when: _gitea_user_password_secret_name | default("") | length > 0
     kubernetes.core.k8s_info:
@@ -226,8 +229,7 @@
     ansible.builtin.include_tasks: create_user.yml
     loop: "{{ range(1, _gitea_user_number | int + 1) | list }}"
 
-  - name: Save user password in custom resource status
-    when: _gitea_user_password_expose | bool
+  - name: Save user password and status in custom resource status
     operator_sdk.util.k8s_status:
       api_version: pfe.rhpds.com/v1
       kind: Gitea
@@ -235,35 +237,44 @@
       namespace: "{{ _gitea_namespace }}"
       status:
         userPassword: "{{ _gitea_actual_user_password }}"
+        userSetupComplete: true
 
-  - name: Save user setup complete in custom resource status
+- name: Retrieve Gitea resource to check repo status
+  kubernetes.core.k8s_info:
+    api_version: pfe.rhpds.com/v1
+    kind: Gitea
+    name: "{{ _gitea_name }}"
+    namespace: "{{ _gitea_namespace }}"
+  register: r_gitea_repos
+
+- name: Migrate repositories only if users and admin user have been created
+  when:
+  - _gitea_create_users | bool
+  - _gitea_admin_user | default("") | length > 0
+  - _gitea_user_number | default(0) | int > 0
+  - _gitea_migrate_repositories | bool
+  - r_gitea_repos.resources[0].status.userSetupComplete | default(false) | bool
+  - r_gitea_repos.resources[0].status.adminPassword | default("") | length > 0
+  - not r_gitea_repos.resources[0].status.repoMigrationComplete | default(false) | bool
+  block:
+  - name: Set actual admin password
+    ansible.builtin.set_fact:
+      _gitea_actual_admin_password: "{{ r_gitea_repos.resources[0].status.adminPassword }}"
+
+  - name: Migrate repositories
+    ansible.builtin.include_tasks: migrate_repos.yml
+    loop: >-
+      {{
+      ( range(1, _gitea_user_number | int + 1) | list )
+      | product(_gitea_repositories_list)
+      | list
+      }}
+
+  - name: Save repo migration status in custom resource status
     operator_sdk.util.k8s_status:
       api_version: pfe.rhpds.com/v1
       kind: Gitea
       name: "{{ _gitea_name }}"
       namespace: "{{ _gitea_namespace }}"
       status:
-        userSetupComplete: true
-
-  - name: Migrate the repositories for the Gitea users
-    when:
-    - _gitea_migrate_repositories | bool
-    - not r_gitea.resources[0].status.repoMigrationComplete | default(false) | bool
-    block:
-    - name: Migrate repositories
-      ansible.builtin.include_tasks: migrate_repos.yml
-      loop: >-
-        {{
-        ( range(1, _gitea_user_number | int + 1) | list )
-        | product(_gitea_repositories_list)
-        | list
-        }}
-
-    - name: Save repo migration status in custom resource status
-      operator_sdk.util.k8s_status:
-        api_version: pfe.rhpds.com/v1
-        kind: Gitea
-        name: "{{ _gitea_name }}"
-        namespace: "{{ _gitea_namespace }}"
-        status:
-          repoMigrationComplete: true
+        repoMigrationComplete: true

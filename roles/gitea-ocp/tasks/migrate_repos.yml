@@ -23,7 +23,7 @@
     force_basic_auth: true
     status_code: 200, 404
   register: r_gitea_repo_exists
-  ignore_errors: true
+  # ignore_errors: true
 
 - name: Gitea Repository does not exist yet
   when: r_gitea_repo_exists.status == 404
@@ -38,12 +38,6 @@
       force_basic_auth: true
     register: r_gitea_insystem_user
 
-  - name: Print user and repo
-    ansible.builtin.debug:
-      msg: >-
-        User: {{ _gitea_user_name }}, Repo: {{ item[1]['repo'] }},
-        Private: {{ item[1]['private'] | bool }}
-
   - name: Create the specified repository for the user
     ansible.builtin.uri:
       url: "{{ _gitea_actual_route_url }}/api/v1/repos/migrate"
@@ -55,6 +49,7 @@
       user: "{{ _gitea_admin_user }}"
       password: "{{ _gitea_actual_admin_password }}"
       force_basic_auth: true
+      timeout: 60
     vars:
       body: >-
         {
@@ -67,7 +62,3 @@
           "repo_name": "{{ item[1]['name'] }}",
           "uid": {{ r_gitea_insystem_user.json.id | int }}
         }
-    register: r_migrate_repo
-    retries: 20
-    delay: 5
-    until: r_migrate_repo.status == 201

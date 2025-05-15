@@ -24,7 +24,7 @@ metadata:
         }
       ]
     capabilities: Basic Install
-    createdAt: "2025-05-14T11:37:09Z"
+    createdAt: "2025-05-15T10:27:43Z"
     operators.operatorframework.io/builder: operator-sdk-v1.39.2
     operators.operatorframework.io/project_layout: ansible.sdk.operatorframework.io/v1
   name: gitea-operator.v2.1.0
