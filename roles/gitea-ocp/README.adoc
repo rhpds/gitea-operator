@@ -59,12 +59,12 @@ This role also requires a PostgreSQL Database to be running in the same OpenShif
     vars:
       _gitea_namespace: "gitea"
       _gitea_name: "gitea"
-      _gitea_ssl: "True|
+      _gitea_ssl: "True"
       _gitea_volume_size: "4Gi"
       _gitea_postgresql_service_name: "postgresql-gitea"
-      _gitea_postgresql_database_name: giteadb
-      _gitea_postgresql_user: giteauser
-      _gitea_postgresql_password: giteapassword
+      _gitea_postgresql_database_name: "giteadb"
+      _gitea_postgresql_user: "giteauser"
+      _gitea_postgresql_password: "giteapassword"
 ----
 
 == License
