@@ -52,12 +52,12 @@ spec:
             cpu: "{{ _gitea_cpu_limit}}"
             memory: "{{ _gitea_memory_limit }}"
         volumeMounts:
-        - name: gitea-repositories
-          mountPath: /gitea-repositories
+        - name: gitea-data
+          mountPath: /gitea-data
         - name: gitea-config
           mountPath: /home/gitea/conf-import
       volumes:
-      - name: gitea-repositories
+      - name: gitea-data
         persistentVolumeClaim:
           claimName: "{{ _gitea_name }}-pvc"
       - name: gitea-config
