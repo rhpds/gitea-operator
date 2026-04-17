@@ -28,7 +28,10 @@ data:
     SSL_MODE = disable
 
     [repository]
-    ROOT = /gitea-repositories
+    ROOT = /gitea-data/repositories
+
+    [packages]
+    PATH = /gitea-data/packages
 
     [server]
     ROOT_URL         = {{ _gitea_actual_route_url }}/
