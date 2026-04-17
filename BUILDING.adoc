@@ -1,4 +1,8 @@
-= Just the steps to build
+= Building and deploying the Gitea Operator
+
+== Building
+
+Switch to the `gitea-operator` directory.
 
 [source,sh]
 ----
@@ -57,10 +61,14 @@ docker build -t quay.io/$QUAY_ID/gitea-catalog:${CATALOG_VERSION} -f gitea-catal
 docker push quay.io/$QUAY_ID/gitea-catalog:${CATALOG_VERSION}
 ----
 
-= Deploy
+== Deploying
 
 [source,sh]
 ----
+QUAY_ID=rhpds
+VERSION=2.3.0
+export CATALOG_VERSION=v${VERSION}
+
 echo "
 ---
 apiVersion: operators.coreos.com/v1alpha1
@@ -100,4 +108,35 @@ spec:
   source: redhat-rhpds-gitea
   sourceNamespace: openshift-marketplace
 " | oc apply -f -
+
+oc new-project gitea
+echo "
+---
+apiVersion: pfe.rhpds.com/v1
+kind: Gitea
+metadata:
+  name: gitea
+  namespace: gitea
+spec:
+  giteaImageTag: 1.25.5.2
+  giteaImagePullPolicy: Always
+  postgresqlVolumeSize: 4Gi
+  giteaVolumeSize: 4Gi
+  giteaSsl: True
+" | oc apply -f -
+----
+
+== Cleanup
+
+[source,sh]
+VERSION=2.3.0
+export OPERATOR_VERSION=v${VERSION}
+
+oc delete gitea gitea -n gitea
+oc delete project gitea
+oc delete subscription gitea-operator -n gitea-operator
+oc delete csv gitea-operator.${OPERATOR_VERSION} -n gitea-operator
+oc delete operatorgroup gitea-operator-og -n gitea-operator
+oc delete project gitea-operator
+oc delete catalogsource redhat-rhpds-gitea -n openshift-marketplace
 ----
