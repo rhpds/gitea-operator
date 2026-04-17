@@ -24,7 +24,7 @@ data:
     HOST     = {{ _gitea_postgresql_service_name }}:{{ _gitea_postgresql_port }}
     NAME     = {{ _gitea_postgresql_database_name }}
     USER     = {{ _gitea_postgresql_user }}
-    PASSWD   = overridden-by-env
+    PASSWD   = {{ _gitea_postgresql_password }}
     SSL_MODE = disable
 
     [repository]

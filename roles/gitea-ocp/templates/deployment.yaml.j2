@@ -28,12 +28,6 @@ spec:
         ports:
         - containerPort: 3000
           protocol: TCP
-        env:
-        - name: GITEA__database__PASSWD
-          valueFrom:
-            secretKeyRef:
-              name: "{{ _gitea_postgresql_service_name }}"
-              key: database-password
         startupProbe:
           httpGet:
             path: /api/healthz
