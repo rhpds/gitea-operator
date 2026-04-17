@@ -94,3 +94,9 @@ data:
     FILE_EXTENSIONS = .adoc,.asciidoc
     RENDER_COMMAND = "asciidoc --backend=xhtml11 --no-header-footer --attribute source-highlighter=source-highlight --out-file=- -"
     IS_INPUT_FILE = false
+
+{% if _gitea_packages_path | default("") | length > 0 %}
+    [packages]
+    PATH = {{ _gitea_packages_path }}
+
+{% endif %}

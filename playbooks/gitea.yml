@@ -100,3 +100,4 @@
       _gitea_mailer_helo_hostname: "{{ gitea_mailer_helo_hostname | default('') }}"
       _gitea_register_email_confirm: "{{ gitea_register_email_confirm | default(false) | bool }}"
       _gitea_enable_notify_mail: "{{ gitea_enable_notify_mail | default(false) | bool }}"
+      _gitea_packages_path: "{{ gitea_packages_path | default('') }}"
