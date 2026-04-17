@@ -15,17 +15,25 @@
   - service.yaml.j2
   - route.yaml.j2
 
-- name: Get Gitea route hostname
+- name: Wait for Gitea route ingress to be assigned
   kubernetes.core.k8s_info:
     api_version: route.openshift.io/v1
     kind: Route
     name: "{{ _gitea_name }}"
     namespace: "{{ _gitea_namespace }}"
   register: r_route
+  until:
+  - r_route.resources | length > 0
+  - r_route.resources[0].status.ingress is defined
+  - r_route.resources[0].status.ingress | length > 0
+  - r_route.resources[0].status.ingress[0].host is defined
+  retries: 30
+  delay: 5
 
 - name: Store Gitea route hostname
   ansible.builtin.set_fact:
-    _gitea_actual_route_url: "{{ 'http' if not _gitea_ssl | default(false) | bool else 'https' }}://{{ r_route.resources[0].status.ingress[0].host }}"
+    _gitea_actual_route_url: >-
+      {{ 'http' if not _gitea_ssl | default(false) | bool else 'https' }}://{{ r_route.resources[0].status.ingress[0].host }}
     _gitea_actual_route_hostname: "{{ r_route.resources[0].status.ingress[0].host }}"
 
 - name: Create ConfigMap with app.ini if not provided
@@ -39,7 +47,7 @@
     state: present
     definition: "{{ lookup('template', 'deployment.yaml.j2') | from_yaml }}"
 
-- name: Wait until application is available
+- name: Wait until Gitea deployment is available
   kubernetes.core.k8s_info:
     api_version: apps/v1
     kind: Deployment
@@ -47,11 +55,11 @@
     namespace: "{{ _gitea_namespace }}"
   register: r_deployment
   until:
+  - r_deployment.resources | length > 0
   - r_deployment.resources[0].status.availableReplicas is defined
   - r_deployment.resources[0].status.availableReplicas == 1
   retries: 50
   delay: 10
-  ignore_errors: true
 
 - name: Save route in custom resource status
   operator_sdk.util.k8s_status:
@@ -73,6 +81,7 @@
 
 - name: Set up admin user
   when:
+  - r_gitea_admin.resources | length > 0
   - not r_gitea_admin.resources[0].status.adminSetupComplete | default(false) | bool
   - _gitea_admin_user | default("") | length > 0
   block:
@@ -85,11 +94,19 @@
       namespace: "{{ _gitea_namespace }}"
     register: r_admin_password_secret
 
+  - name: Fail if specified admin password secret does not exist
+    when:
+    - _gitea_admin_password_secret_name | default("") | length > 0
+    - r_admin_password_secret.resources | default([]) | length == 0
+    ansible.builtin.fail:
+      msg: >-
+        Secret '{{ _gitea_admin_password_secret_name }}' not found
+        in namespace {{ _gitea_namespace }}
+
   - name: Set admin password from secret
     when:
     - r_admin_password_secret.resources is defined
     - r_admin_password_secret.resources | length > 0
-    - r_admin_password_secret.resources[0].data is defined
     - r_admin_password_secret.resources[0].data.adminPassword is defined
     - r_admin_password_secret.resources[0].data.adminPassword | length > 0
     ansible.builtin.set_fact:
@@ -108,7 +125,7 @@
     - _gitea_admin_password | default("") | length == 0
     ansible.builtin.set_fact:
       _gitea_actual_admin_password: >-
-        {{ lookup('password', '/dev/null length={{ _gitea_admin_password_length | default( 16 ) }} chars=ascii_letters,digits') }}
+        {{ lookup('password', '/dev/null length={{ _gitea_admin_password_length | default(16) }} chars=ascii_letters,digits') }}
 
   - name: Check if Gitea admin user already exists
     ansible.builtin.uri:
@@ -125,29 +142,49 @@
   - name: Create Gitea admin user
     when: r_gitea_admin_user.status == 404
     block:
-    - name: Retrieve Gitea pod
+    - name: Retrieve running Gitea pod
       kubernetes.core.k8s_info:
         kind: Pod
         namespace: "{{ _gitea_namespace }}"
         label_selectors:
         - app = {{ _gitea_name }}
+        field_selectors:
+        - status.phase=Running
       register: r_gitea_pod
+      until: r_gitea_pod.resources | length > 0
+      retries: 10
+      delay: 5
 
-    - name: Create Gitea admin user
+    - name: Create Gitea admin user via CLI
       kubernetes.core.k8s_exec:
         namespace: "{{ _gitea_namespace }}"
         pod: "{{ r_gitea_pod.resources[0].metadata.name }}"
         command: >-
           /usr/bin/giteacmd admin user create
-          --username {{ _gitea_admin_user }}
-          --password {{ _gitea_actual_admin_password }}
-          --email {{ _gitea_admin_email }}
+          --username {{ _gitea_admin_user | quote }}
+          --password {{ _gitea_actual_admin_password | quote }}
+          --email {{ _gitea_admin_email | quote }}
           --must-change-password=false
           --admin
       register: r_create_admin_user
 
+    - name: Update CR status with admin creation failure
+      when: r_create_admin_user.return_code != 0
+      operator_sdk.util.k8s_status:
+        api_version: pfe.rhpds.com/v1
+        kind: Gitea
+        name: "{{ _gitea_name }}"
+        namespace: "{{ _gitea_namespace }}"
+        status:
+          adminSetupComplete: false
+          adminSetupError: "{{ r_create_admin_user.stderr | default('Unknown error') }}"
+
+    - name: Fail if admin user creation failed
+      when: r_create_admin_user.return_code != 0
+      ansible.builtin.fail:
+        msg: "Failed to create admin user: {{ r_create_admin_user.stderr | default('Unknown error') }}"
+
     - name: Save admin password and status in custom resource status
-      when: r_create_admin_user.return_code == 0
       operator_sdk.util.k8s_status:
         api_version: pfe.rhpds.com/v1
         kind: Gitea
@@ -184,6 +221,7 @@
   - _gitea_create_users | bool
   - _gitea_admin_user | default("") | length > 0
   - _gitea_user_number | default(0) | int > 0
+  - r_gitea_users.resources | default([]) | length > 0
   - r_gitea_users.resources[0].status.adminPassword | default("") | length > 0
   - not r_gitea_users.resources[0].status.userSetupComplete | default(false) | bool
   block:
@@ -200,11 +238,19 @@
       namespace: "{{ _gitea_namespace }}"
     register: r_user_password_secret
 
+  - name: Fail if specified user password secret does not exist
+    when:
+    - _gitea_user_password_secret_name | default("") | length > 0
+    - r_user_password_secret.resources | default([]) | length == 0
+    ansible.builtin.fail:
+      msg: >-
+        Secret '{{ _gitea_user_password_secret_name }}' not found
+        in namespace {{ _gitea_namespace }}
+
   - name: Set user password from secret
     when:
     - r_user_password_secret.resources is defined
     - r_user_password_secret.resources | length > 0
-    - r_user_password_secret.resources[0].data is defined
     - r_user_password_secret.resources[0].data.userPassword is defined
     - r_user_password_secret.resources[0].data.userPassword | length > 0
     ansible.builtin.set_fact:
@@ -223,7 +269,7 @@
     - _gitea_user_password | default("") | length == 0
     ansible.builtin.set_fact:
       _gitea_actual_user_password: >-
-        {{ lookup('password', '/dev/null length={{ _gitea_user_password_length | default( 16 ) }} chars=ascii_letters,digits') }}
+        {{ lookup('password', '/dev/null length={{ _gitea_user_password_length | default(16) }} chars=ascii_letters,digits') }}
 
   - name: Create the users in Gitea
     ansible.builtin.include_tasks: create_user.yml
@@ -253,6 +299,7 @@
   - _gitea_admin_user | default("") | length > 0
   - _gitea_user_number | default(0) | int > 0
   - _gitea_migrate_repositories | bool
+  - r_gitea_repos.resources | default([]) | length > 0
   - r_gitea_repos.resources[0].status.userSetupComplete | default(false) | bool
   - r_gitea_repos.resources[0].status.adminPassword | default("") | length > 0
   - not r_gitea_repos.resources[0].status.repoMigrationComplete | default(false) | bool

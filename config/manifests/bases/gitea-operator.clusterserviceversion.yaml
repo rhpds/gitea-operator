@@ -33,7 +33,7 @@ spec:
   - repository
   links:
   - name: Gitea Operator
-    url: https://gitea-operator.domain
+    url: https://github.com/rhpds/gitea-operator
   maintainers:
   - email: wkulhane@redhat.com
     name: Wolfgang Kulhanek
