@@ -16,7 +16,7 @@ metadata:
           },
           "spec": {
             "giteaImagePullPolicy": "Always",
-            "giteaImageTag": "1.23.7",
+            "giteaImageTag": "1.25.5.2",
             "giteaSsl": true,
             "giteaVolumeSize": "4Gi",
             "postgresqlVolumeSize": "4Gi"
@@ -24,10 +24,10 @@ metadata:
         }
       ]
     capabilities: Basic Install
-    createdAt: "2025-05-15T10:27:43Z"
+    createdAt: "2026-04-17T10:19:17Z"
     operators.operatorframework.io/builder: operator-sdk-v1.39.2
     operators.operatorframework.io/project_layout: ansible.sdk.operatorframework.io/v1
-  name: gitea-operator.v2.1.0
+  name: gitea-operator.v2.3.0
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -161,7 +161,7 @@ spec:
                 env:
                 - name: ANSIBLE_GATHERING
                   value: explicit
-                image: quay.io/rhpds/gitea-operator:v2.1.0
+                image: quay.io/rhpds/gitea-operator:v2.3.0
                 livenessProbe:
                   httpGet:
                     path: /healthz
@@ -247,5 +247,5 @@ spec:
   maturity: stable
   provider:
     name: Red Hat Portfolio Technical Marketing and Platforms
-  replaces: gitea-operator.v1.1.0
-  version: 2.1.0
+  replaces: gitea-operator.v2.2.0
+  version: 2.3.0
