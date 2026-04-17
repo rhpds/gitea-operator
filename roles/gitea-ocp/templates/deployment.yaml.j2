@@ -15,6 +15,10 @@ spec:
     metadata:
       labels:
         app: "{{ _gitea_name }}"
+{% if _gitea_config_map_name | default('') | length == 0 %}
+      annotations:
+        configmap/checksum: "{{ lookup('template', 'configmap.yaml.j2') | hash('sha256') }}"
+{% endif %}
     spec:
       serviceAccountName: "{{ _gitea_name }}"
       containers:
@@ -24,9 +28,15 @@ spec:
         ports:
         - containerPort: 3000
           protocol: TCP
+        env:
+        - name: GITEA_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: "{{ _gitea_postgresql_service_name }}"
+              key: database-password
         readinessProbe:
           httpGet:
-            path: /
+            path: /api/healthz
             port: 3000
             scheme: HTTP
           initialDelaySeconds: 15
@@ -36,7 +46,7 @@ spec:
           failureThreshold: 3
         livenessProbe:
           httpGet:
-            path: /
+            path: /api/healthz
             port: 3000
             scheme: HTTP
           initialDelaySeconds: 15
@@ -47,9 +57,9 @@ spec:
         resources:
           requests:
             cpu: "{{ _gitea_cpu_request }}"
-            memory: "{{ _gitea_memory_request}}"
+            memory: "{{ _gitea_memory_request }}"
           limits:
-            cpu: "{{ _gitea_cpu_limit}}"
+            cpu: "{{ _gitea_cpu_limit }}"
             memory: "{{ _gitea_memory_limit }}"
         volumeMounts:
         - name: gitea-data

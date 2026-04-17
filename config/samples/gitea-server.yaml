@@ -7,7 +7,7 @@ metadata:
     app.kubernetes.io/name: gitea-operator
     app.kubernetes.io/managed-by: kustomize
 spec:
-  giteaImageTag: 1.23.7
+  giteaImageTag: 1.25.5.2
   giteaImagePullPolicy: Always
   postgresqlVolumeSize: 4Gi
   giteaVolumeSize: 4Gi
