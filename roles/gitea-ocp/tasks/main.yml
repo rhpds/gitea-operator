@@ -36,6 +36,11 @@
       {{ 'http' if not _gitea_ssl | default(false) | bool else 'https' }}://{{ r_route.resources[0].status.ingress[0].host }}
     _gitea_actual_route_hostname: "{{ r_route.resources[0].status.ingress[0].host }}"
 
+- name: Extract cluster apps domain from route hostname
+  ansible.builtin.set_fact:
+    _gitea_apps_domain: >-
+      {{ _gitea_actual_route_hostname.split('.')[1:] | join('.') }}
+
 - name: Create ConfigMap with app.ini if not provided
   when: _gitea_config_map_name | default('') | length == 0
   kubernetes.core.k8s:

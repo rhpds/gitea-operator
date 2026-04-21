@@ -10,6 +10,14 @@ data:
     RUN_MODE = prod
     RUN_USER = gitea
 
+    [cors]
+    ENABLED = true
+    ALLOW_DOMAIN = {{ _gitea_apps_domain }}
+    ALLOW_SUBDOMAIN = true
+    METHODS = GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS
+    MAX_AGE = 10m
+    ALLOW_CREDENTIALS = false
+
     [security]
     INTERNAL_TOKEN      = ${GITEA_INTERNAL_TOKEN}
     INSTALL_LOCK        = true
