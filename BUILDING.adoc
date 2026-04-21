@@ -6,8 +6,8 @@ Switch to the `gitea-operator` directory.
 
 [source,sh]
 ----
-VERSION=2.3.0
-VERSION_PREVIOUS=2.2.0
+VERSION=2.3.1
+VERSION_PREVIOUS=2.3.1
 export OPERATOR_VERSION_PREVIOUS=v${VERSION_PREVIOUS}
 export OPERATOR_VERSION=v${VERSION}
 # No v in front of the Bundle version
@@ -66,7 +66,7 @@ docker push quay.io/$QUAY_ID/gitea-catalog:${CATALOG_VERSION}
 [source,sh]
 ----
 QUAY_ID=rhpds
-VERSION=2.3.0
+VERSION=2.3.1
 export CATALOG_VERSION=v${VERSION}
 
 echo "
@@ -118,7 +118,7 @@ metadata:
   name: gitea
   namespace: gitea
 spec:
-  giteaImageTag: 1.25.5.2
+  giteaImageTag: 1.26
   giteaImagePullPolicy: Always
   postgresqlVolumeSize: 4Gi
   giteaVolumeSize: 4Gi
@@ -129,7 +129,7 @@ spec:
 == Cleanup
 
 [source,sh]
-VERSION=2.3.0
+VERSION=2.3.1
 export OPERATOR_VERSION=v${VERSION}
 
 oc delete gitea gitea -n gitea
