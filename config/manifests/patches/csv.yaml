@@ -6,7 +6,7 @@ metadata:
   name: gitea-operator.v0.0.0
   namespace: placeholder
 spec:
-  replaces: gitea-operator.v2.2.0
+  replaces: gitea-operator.v2.3.1
   maturity: stable
   icon:
   - base64data: 
