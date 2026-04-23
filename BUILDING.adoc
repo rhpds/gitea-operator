@@ -6,11 +6,11 @@ Switch to the `gitea-operator` directory.
 
 [source,sh]
 ----
-export QUAY_ID=rhpds
 podman login -u wkulhanek quay.io
 
 VERSION=2.3.2
 VERSION_PREVIOUS=2.3.1
+export QUAY_ID=rhpds
 export OPERATOR_VERSION_PREVIOUS=v${VERSION_PREVIOUS}
 export OPERATOR_VERSION=v${VERSION}
 # No v in front of the Bundle version
