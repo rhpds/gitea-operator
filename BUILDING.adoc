@@ -6,6 +6,9 @@ Switch to the `gitea-operator` directory.
 
 [source,sh]
 ----
+export QUAY_ID=rhpds
+podman login -u wkulhanek quay.io
+
 VERSION=2.3.2
 VERSION_PREVIOUS=2.3.1
 export OPERATOR_VERSION_PREVIOUS=v${VERSION_PREVIOUS}
@@ -13,9 +16,6 @@ export OPERATOR_VERSION=v${VERSION}
 # No v in front of the Bundle version
 export BUNDLE_VERSION=${VERSION}
 export CATALOG_VERSION=v${VERSION}
-
-export QUAY_ID=rhpds
-podman login -u wkulhanek quay.io
 
 make docker-build IMG=quay.io/$QUAY_ID/gitea-operator:$OPERATOR_VERSION
 make docker-push IMG=quay.io/$QUAY_ID/gitea-operator:$OPERATOR_VERSION
