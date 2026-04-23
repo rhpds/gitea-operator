@@ -12,8 +12,8 @@ data:
 
     [cors]
     ENABLED = true
-    ALLOW_DOMAIN = {{ _gitea_apps_domain }}
-    ALLOW_SUBDOMAIN = true
+    ALLOW_DOMAIN = *
+    ALLOW_SUBDOMAIN = false
     METHODS = GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS
     MAX_AGE = 10m
     ALLOW_CREDENTIALS = false
